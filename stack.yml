@@ -1,0 +1,21 @@
+version: "3.1"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 8001:5432
+    volumes:
+      - db-data:/var/lib/postresql/data
+    environment:
+      POSTGRES_PASSWORD: devpassword
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8002:8080
+
+volumes:
+  db-data:
