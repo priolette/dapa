@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAPA.Api", "DAPA.Api\DAPA.Api.csproj", "{3F5C9AE2-3521-44A5-A5F4-558396119A91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAPA.DataAccess", "dapa.dataaccess\DAPA.DataAccess.csproj", "{3EE4CB12-630F-4FE1-A084-524645006CC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAPA.Models", "dapa.models\DAPA.Models.csproj", "{86D722FC-1AEA-4CAF-87D5-D0F3BA1D52C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{3F5C9AE2-3521-44A5-A5F4-558396119A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F5C9AE2-3521-44A5-A5F4-558396119A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F5C9AE2-3521-44A5-A5F4-558396119A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EE4CB12-630F-4FE1-A084-524645006CC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EE4CB12-630F-4FE1-A084-524645006CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EE4CB12-630F-4FE1-A084-524645006CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EE4CB12-630F-4FE1-A084-524645006CC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86D722FC-1AEA-4CAF-87D5-D0F3BA1D52C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86D722FC-1AEA-4CAF-87D5-D0F3BA1D52C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86D722FC-1AEA-4CAF-87D5-D0F3BA1D52C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86D722FC-1AEA-4CAF-87D5-D0F3BA1D52C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
