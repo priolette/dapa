@@ -1,0 +1,1889 @@
+openapi: 3.0.0
+info:
+  title: POS system
+  description: API for managing Discounts, Services, Products, Carts, Orders, Payments, Clients, Loyalties, Reservations, Staff, and Roles
+  version: 1.0.0
+
+paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      requestBody:
+        description: User credentials for login
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Unauthorized (Invalid credentials)
+
+  /logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      requestBody:
+        description: User token for logout
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Successful logout
+        '401':
+          description: Unauthorized (Invalid token)
+
+  /discounts:
+    get:
+      tags:
+        - Discounts
+      summary: Get all discounts based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter discounts by ID
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: Filter discounts by name
+          schema:
+            type: string
+        - name: size
+          in: query
+          description: Filter discounts by size
+          schema:
+            type: integer
+        - name: start_date
+          in: query
+          description: Filter discounts by start date
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: Filter discounts by end date
+          schema:
+            type: string
+        - name: applicable_category
+          in: query
+          description: Filter discounts by applicable category
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Discount'
+        '400':
+          description: Bad request
+
+  /discount:
+    post:
+      tags:
+        - Discounts
+      summary: Create a new discount
+      requestBody:
+        description: Discount object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Discount'
+      responses:
+        '201':
+          description: Discount created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+        '400':
+          description: Bad request
+
+  /discount/{id}:
+    get:
+      tags:
+        - Discounts
+      summary: Get a discount by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the discount
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+        '404':
+          description: Discount not found
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Discounts
+      summary: Update a discount by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the discount
+          schema:
+            type: integer
+      requestBody:
+        description: Updated discount object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Discount'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+        '404':
+          description: Discount not found
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Discounts
+      summary: Delete a discount by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the discount
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '404':
+          description: Discount not found
+        '400':
+          description: Bad request
+
+  /services:
+    get:
+      tags:
+        - Services
+      summary: Get all services based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter services by ID
+          schema:
+            type: integer
+        - name: title
+          in: query
+          description: Filter services by title
+          schema:
+            type: string
+        - name: price
+          in: query
+          description: Filter services by price
+          schema:
+            type: number
+        - name: duration
+          in: query
+          description: Filter services by duration
+          schema:
+            type: integer
+        - name: category
+          in: query
+          description: Filter services by category
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+        '400':
+          description: Bad request
+
+  /service:
+    post:
+      tags:
+        - Services
+      summary: Create a new service
+      requestBody:
+        description: Service object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '201':
+          description: Service created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '400':
+          description: Bad request
+
+  /service/{id}:
+    get:
+      tags:
+        - Services
+      summary: Get a service by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the service
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '404':
+          description: Service not found
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Services
+      summary: Update a service by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the service
+          schema:
+            type: integer
+      requestBody:
+        description: Updated service object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '404':
+          description: Service not found
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Services
+      summary: Delete a service by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the service
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '404':
+          description: Service not found
+        '400':
+          description: Bad request
+
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Get products based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter products by ID
+          schema:
+            type: integer
+        - name: title
+          in: query
+          description: Filter products by title
+          schema:
+            type: string
+        - name: price
+          in: query
+          description: Filter products by price
+          schema:
+            type: number
+        - name: description
+          in: query
+          description: Filter products by description
+          schema:
+            type: string
+        - name: discountID
+          in: query
+          description: Filter products by discount ID
+          schema:
+            type: integer
+        - name: category
+          in: query
+          description: Filter products by category
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+
+  /product:
+    post:
+      tags:
+        - Products
+      summary: Create a new product
+      requestBody:
+        description: Product object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+
+  /product/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get a product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Products
+      summary: Update a product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product
+          schema:
+            type: integer
+      requestBody:
+        description: Updated product object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Products
+      summary: Delete a product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the product
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /product_carts:
+    get:
+      tags:
+        - Product_Carts
+      summary: Get product carts based on filter criteria
+      parameters:
+        - name: orderID
+          in: query
+          description: Filter product carts by order ID
+          schema:
+            type: integer
+        - name: productID
+          in: query
+          description: Filter product carts by product ID
+          schema:
+            type: integer
+        - name: quantity
+          in: query
+          description: Filter product carts by quantity
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product_Cart'
+        '400':
+          description: Bad request
+
+  /product_cart:
+    post:
+      tags:
+        - Product_Carts
+      summary: Create a new product cart
+      requestBody:
+        description: Product Cart object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product_Cart'
+      responses:
+        '201':
+          description: Product cart created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product_Cart'
+        '400':
+          description: Bad request
+
+  /product_cart/{orderID}/{productID}:
+    get:
+      tags:
+        - Product_Carts
+      summary: Get a product cart by order ID and product ID
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: Order ID of the product cart
+          schema:
+            type: integer
+        - name: productID
+          in: path
+          required: true
+          description: Product ID of the product cart
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product_Cart'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Product_Carts
+      summary: Update a product cart by order ID and product ID
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: Order ID of the product cart
+          schema:
+            type: integer
+        - name: productID
+          in: path
+          required: true
+          description: Product ID of the product cart
+          schema:
+            type: integer
+      requestBody:
+        description: Updated product cart object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product_Cart'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product_Cart'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Product_Carts
+      summary: Delete a product cart by order ID and product ID
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: Order ID of the product cart
+          schema:
+            type: integer
+        - name: productID
+          in: path
+          required: true
+          description: Product ID of the product cart
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /service_carts:
+    get:
+      tags:
+        - Service_Carts
+      summary: Get service carts based on filter criteria
+      parameters:
+        - name: orderID
+          in: query
+          description: Filter service carts by order ID
+          schema:
+            type: integer
+        - name: serviceID
+          in: query
+          description: Filter service carts by service ID
+          schema:
+            type: integer
+        - name: quantity
+          in: query
+          description: Filter service carts by quantity
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service_Cart'
+        '400':
+          description: Bad request
+
+  /service_cart:
+    post:
+      tags:
+        - Service_Carts
+      summary: Create a new service cart
+      requestBody:
+        description: Service Cart object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service_Cart'
+      responses:
+        '201':
+          description: Service cart created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service_Cart'
+        '400':
+          description: Bad request
+
+  /service_cart/{orderID}/{serviceID}:
+    get:
+      tags:
+        - Service_Carts
+      summary: Get a service cart by order ID and service ID
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: Order ID of the service cart
+          schema:
+            type: integer
+        - name: serviceID
+          in: path
+          required: true
+          description: Service ID of the service cart
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service_Cart'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Service_Carts
+      summary: Update a service cart by order ID and service ID
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: Order ID of the service cart
+          schema:
+            type: integer
+        - name: serviceID
+          in: path
+          required: true
+          description: Service ID of the service cart
+          schema:
+            type: integer
+      requestBody:
+        description: Updated service cart object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service_Cart'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service_Cart'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Service_Carts
+      summary: Delete a service cart by order ID and service ID
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: Order ID of the service cart
+          schema:
+            type: integer
+        - name: serviceID
+          in: path
+          required: true
+          description: Service ID of the service cart
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /orders:
+    get:
+      tags:
+        - Orders
+      summary: Get orders based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter orders by ID
+          schema:
+            type: integer
+        - name: clientID
+          in: query
+          description: Filter orders by client ID
+          schema:
+            type: integer
+        - name: creationDate
+          in: query
+          description: Filter orders by creation date
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter orders by status
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
+
+  /order:
+    post:
+      tags:
+        - Orders
+      summary: Create a new order
+      requestBody:
+        description: Order object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
+
+  /order/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get an order by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the order
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Orders
+      summary: Update an order by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the order
+          schema:
+            type: integer
+      requestBody:
+        description: Updated order object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Orders
+      summary: Delete an order by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the order
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /payments:
+    get:
+      tags:
+        - Payments
+      summary: Get payments based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter payments by ID
+          schema:
+            type: integer
+        - name: orderID
+          in: query
+          description: Filter payments by order ID
+          schema:
+            type: integer
+        - name: date
+          in: query
+          description: Filter payments by date
+          schema:
+            type: string
+        - name: method
+          in: query
+          description: Filter payments by method
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+        '400':
+          description: Bad request
+
+  /payment:
+    post:
+      tags:
+        - Payments
+      summary: Create a new payment
+      requestBody:
+        description: Payment object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+      responses:
+        '201':
+          description: Payment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: Bad request
+
+  /payment/{id}:
+    get:
+      tags:
+        - Payments
+      summary: Get a payment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the payment
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Payments
+      summary: Update a payment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the payment
+          schema:
+            type: integer
+      requestBody:
+        description: Updated payment object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Payments
+      summary: Delete a payment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the payment
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /clients:
+    get:
+      tags:
+        - Clients
+      summary: Get clients based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter clients by ID
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: Filter clients by name
+          schema:
+            type: string
+        - name: surname
+          in: query
+          description: Filter clients by surname
+          schema:
+            type: string
+        - name: loyaltyID
+          in: query
+          description: Filter clients by loyalty ID
+          schema:
+            type: integer
+        - name: phoneNumber
+          in: query
+          description: Filter clients by phone number
+          schema:
+            type: integer
+        - name: email
+          in: query
+          description: Filter clients by email
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        '400':
+          description: Bad request
+
+  /client:
+    post:
+      tags:
+        - Clients
+      summary: Create a new client
+      requestBody:
+        description: Client object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: Bad request
+
+  /client/{id}:
+    get:
+      tags:
+        - Clients
+      summary: Get a client by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the client
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Clients
+      summary: Update a client by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the client
+          schema:
+            type: integer
+      requestBody:
+        description: Updated client object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Clients
+      summary: Delete a client by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the client
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /loyalties:
+    get:
+      tags:
+        - Loyalties
+      summary: Get loyalties based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter loyalties by ID
+          schema:
+            type: integer
+        - name: startDate
+          in: query
+          description: Filter loyalties by start date
+          schema:
+            type: string
+        - name: discount
+          in: query
+          description: Filter loyalties by discount
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Loyalty'
+        '400':
+          description: Bad request
+
+  /loyalty:
+    post:
+      tags:
+        - Loyalties
+      summary: Create a new loyalty
+      requestBody:
+        description: Loyalty object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Loyalty'
+      responses:
+        '201':
+          description: Loyalty created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loyalty'
+        '400':
+          description: Bad request
+
+  /loyalty/{id}:
+    get:
+      tags:
+        - Loyalties
+      summary: Get a loyalty by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the loyalty
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loyalty'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Loyalties
+      summary: Update a loyalty by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the loyalty
+          schema:
+            type: integer
+      requestBody:
+        description: Updated loyalty object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Loyalty'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loyalty'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Loyalties
+      summary: Delete a loyalty by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the loyalty
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /reservations:
+    get:
+      tags:
+        - Reservations
+      summary: Get reservations based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter reservations by ID
+          schema:
+            type: integer
+        - name: clientID
+          in: query
+          description: Filter reservations by client ID
+          schema:
+            type: integer
+        - name: serviceID
+          in: query
+          description: Filter reservations by service ID
+          schema:
+            type: integer
+        - name: staffID
+          in: query
+          description: Filter reservations by staff ID
+          schema:
+            type: integer
+        - name: dateTime
+          in: query
+          description: Filter reservations by date and time
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+        '400':
+          description: Bad request
+
+  /reservation:
+    post:
+      tags:
+        - Reservations
+      summary: Create a new reservation
+      requestBody:
+        description: Reservation object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reservation'
+      responses:
+        '201':
+          description: Reservation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '400':
+          description: Bad request
+
+  /reservation/{id}:
+    get:
+      tags:
+        - Reservations
+      summary: Get a reservation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the reservation
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Reservations
+      summary: Update a reservation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the reservation
+          schema:
+            type: integer
+      requestBody:
+        description: Updated reservation object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reservation'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Reservations
+      summary: Delete a reservation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the reservation
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /staff:
+    get:
+      tags:
+        - Staff
+      summary: Get staff members based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter staff members by ID
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: Filter staff members by name
+          schema:
+            type: string
+        - name: surname
+          in: query
+          description: Filter staff members by surname
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: Filter staff members by password
+          schema:
+            type: integer
+        - name: position
+          in: query
+          description: Filter staff members by position
+          schema:
+            type: string
+        - name: roleID
+          in: query
+          description: Filter staff members by role ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Staff'
+        '400':
+          description: Bad request
+
+    post:
+      tags:
+        - Staff
+      summary: Create a new staff member
+      requestBody:
+        description: Staff member object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Staff'
+      responses:
+        '201':
+          description: Staff member created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+        '400':
+          description: Bad request
+
+  /staff/{id}:
+    get:
+      tags:
+        - Staff
+      summary: Get a staff member by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the staff member
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Staff
+      summary: Update a staff member by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the staff member
+          schema:
+            type: integer
+      requestBody:
+        description: Updated staff member object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Staff'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Staff
+      summary: Delete a staff member by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the staff member
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+  /roles:
+    get:
+      tags:
+        - Roles
+      summary: Get roles based on filter criteria
+      parameters:
+        - name: id
+          in: query
+          description: Filter roles by ID
+          schema:
+            type: integer
+        - name: title
+          in: query
+          description: Filter roles by title
+          schema:
+            type: string
+        - name: permissionViewOrder
+          in: query
+          description: Filter roles by permission to view orders
+          schema:
+            type: boolean
+        - name: permissionManageOrder
+          in: query
+          description: Filter roles by permission to manage orders
+          schema:
+            type: boolean
+        - name: permissionCreateDiscount
+          in: query
+          description: Filter roles by permission to create discounts
+          schema:
+            type: boolean
+        - name: permissionManageItems
+          in: query
+          description: Filter roles by permission to manage items
+          schema:
+            type: boolean
+        - name: permissionManageServices
+          in: query
+          description: Filter roles by permission to manage services
+          schema:
+            type: boolean
+        - name: isOwner
+          in: query
+          description: Filter roles by ownership status
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad request
+
+  /role:
+    post:
+      tags:
+        - Roles
+      summary: Create a new role
+      requestBody:
+        description: Role object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '201':
+          description: Role created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad request
+
+  /role/{id}:
+    get:
+      tags:
+        - Roles
+      summary: Get a role by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the role
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad request
+
+    put:
+      tags:
+        - Roles
+      summary: Update a role by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the role
+          schema:
+            type: integer
+      requestBody:
+        description: Updated role object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad request
+
+    delete:
+      tags:
+        - Roles
+      summary: Delete a role by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the role
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          description: Bad request
+
+components:
+  schemas:
+    Discount:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Name:
+          type: string
+        Size:
+          type: integer
+        Start_date:
+          type: string
+        End_date:
+          type: string
+        Applicable_Category:
+          type: string
+
+    Service:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Title:
+          type: string
+        Price:
+          type: number
+        Duration:
+          type: integer
+        Description:
+          type: string
+        Discount_ID:
+          type: integer
+        Category:
+          type: string
+        Performer_ID:
+          type: integer
+        Service_DateTime:
+          type: string
+
+    Product:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Title:
+          type: string
+        Price:
+          type: number
+        Description:
+          type: string
+        Discount_ID:
+          type: integer
+        Category:
+          type: string
+
+    Product_Cart:
+      type: object
+      properties:
+        Order_ID:
+          type: integer
+        Product_ID:
+          type: integer
+        Quantity:
+          type: integer
+
+    Service_Cart:
+      type: object
+      properties:
+        Order_ID:
+          type: integer
+        Service_ID:
+          type: integer
+        Quantity:
+          type: integer
+
+    Order:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Client_ID:
+          type: integer
+        Creation_date:
+          type: string
+        Status:
+          type: string
+          enum:
+            - canceled
+            - completed
+            - in progress
+            - paid
+        Staff_ID:
+          type: integer
+        Discount_ID:
+          type: integer
+        Details:
+          type: string
+
+    Status:
+      type: string
+      enum:
+        - canceled
+        - completed
+        - in progress
+        - paid
+
+    Payment:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Order_ID:
+          type: integer
+        Date:
+          type: string
+        Method:
+          type: string
+          enum:
+            - Card
+            - Cash
+            - Coupon
+
+    Payment_method:
+      type: string
+      enum:
+        - Card
+        - Cash
+        - Coupon
+
+    Client:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Name:
+          type: string
+        Surname:
+          type: string
+        Loyalty_ID:
+          type: integer
+        Phone_Number:
+          type: integer
+        Email:
+          type: string
+
+    Loyalty:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Start_date:
+          type: string
+        Discount:
+          type: integer
+
+    Reservation:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Client_ID:
+          type: integer
+        Service_ID:
+          type: integer
+        Staff_ID:
+          type: integer
+        Date_Time:
+          type: string
+
+    Staff:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Name:
+          type: string
+        Surname:
+          type: string
+        Password:
+          type: integer
+        Position:
+          type: string
+        RoleID:
+          type: integer
+
+    Role:
+      type: object
+      properties:
+        ID:
+          type: integer
+        Title:
+          type: string
+        Permission_View_Order:
+          type: boolean
+        Permission_Manage_Order:
+          type: boolean
+        Permission_Create_Discount:
+          type: boolean
+        Permission_Manage_Items:
+          type: boolean
+        Permission_Manage_Services:
+          type: boolean
+        is_owner:
+          type: boolean
