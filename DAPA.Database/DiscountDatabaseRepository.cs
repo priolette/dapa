@@ -3,7 +3,7 @@ using DAPA.Models;
 using DAPA.Models.Public;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAPA.DataAccess;
+namespace DAPA.Database;
 
 public class DiscountDatabaseRepository : IDiscountRepository
 {

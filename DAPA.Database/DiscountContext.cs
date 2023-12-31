@@ -1,7 +1,7 @@
 using DAPA.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAPA.DataAccess;
+namespace DAPA.Database;
 
 public interface IDiscountContext
 {

@@ -8,10 +8,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DAPA.Models\DAPA.Models.csproj" />
-    <ProjectReference Include="..\DAPA.DataAccess\DAPA.DataAccess.csproj" />
+    <ProjectReference Include="..\DAPA.Database\DAPA.Database.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.14" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />

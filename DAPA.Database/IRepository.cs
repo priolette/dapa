@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace DAPA.DataAccess;
+namespace DAPA.Database;
 
 public interface IRepository<T>
     where T : class

@@ -1,7 +1,7 @@
 using DAPA.Models;
 using DAPA.Models.Public;
 
-namespace DAPA.DataAccess;
+namespace DAPA.Database;
 
 public interface IDiscountRepository : IRepository<Discount>
 {

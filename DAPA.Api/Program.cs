@@ -1,5 +1,7 @@
-using DAPA.DataAccess;
-using DAPA.Models;
+using System.ComponentModel.DataAnnotations;
+using DAPA.Database;
+using DAPA.Models.Mappings;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,8 @@ builder
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAutoMapper(typeof(DiscountProfile));
 
 builder.Services.AddScoped<IDiscountContext>(
     provider => provider.GetRequiredService<DiscountContext>()
@@ -27,11 +31,17 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
+    var provider = new FileExtensionContentTypeProvider
     {
-        options.SwaggerEndpoint("/pos_api.yaml", "POS API");
-    });
+        Mappings =
+        {
+            [".yaml"] = "application/x-yaml"
+        }
+    };
+    app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
+
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger.yaml", "POS system"));
 
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
