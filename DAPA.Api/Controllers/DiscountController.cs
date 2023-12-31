@@ -11,10 +11,12 @@ namespace DAPA.Api.Controllers;
 public class DiscountController : ControllerBase
 {
     private readonly IDiscountRepository _discountRepository;
+    private readonly IMapper _mapper;
 
-    public DiscountController(IDiscountRepository discountRepository)
+    public DiscountController(IDiscountRepository discountRepository, IMapper mapper)
     {
         _discountRepository = discountRepository;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -99,13 +101,8 @@ public class DiscountController : ControllerBase
         if (discount is null)
             return NotFound($"Could not find discount with ID: {id}");
 
-        // TODO: perhaps use AutoMapper?
-        // Doing this currently because of instance tracking issues
-        discount.Name = request.Name;
-        discount.Size = request.Size;
-        discount.Start_date = request.Start_date;
-        discount.End_date = request.End_date;
-        discount.Applicable_Category = request.Applicable_Category;
+        var newDiscount = _mapper.Map(request, discount);
+        if (newDiscount is null) return StatusCode(StatusCodes.Status500InternalServerError);
 
         try
         {
@@ -113,7 +110,7 @@ public class DiscountController : ControllerBase
         }
         catch (Exception e)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         return Ok(discount);
@@ -135,10 +132,13 @@ public class DiscountController : ControllerBase
         if (!discountExists)
             return NotFound($"Could not find discount with ID: {id}");
 
-        /// Perhaps also use AutoMapper here?
+        var discount = _mapper.Map<Discount>(id);
+        if (discount is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
+        // Perhaps also use AutoMapper here?
         try
         {
-            await _discountRepository.DeleteAsync(new Discount { ID = id });
+            await _discountRepository.DeleteAsync(discount);
         }
         catch (Exception)
         {
