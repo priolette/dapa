@@ -19,6 +19,8 @@ public class DiscountController : ControllerBase
         _mapper = mapper;
     }
 
+    #region Discounts
+    
     [HttpGet]
     [Route("/discounts")]
     public async Task<ActionResult<IEnumerable<Discount>>> GetAllDiscounts(
@@ -147,4 +149,17 @@ public class DiscountController : ControllerBase
 
         return NoContent();
     }
+    
+    #endregion
+    
+    #region Loyalties
+
+    [HttpGet]
+    [Route("/loyalties")]
+    public Task<ActionResult> GetAllLoyalties()
+    {
+        return null;
+    }
+    
+    #endregion
 }
