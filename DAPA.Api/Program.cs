@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using DAPA.Database;
 using DAPA.Models.Mappings;
 using Microsoft.AspNetCore.StaticFiles;
@@ -15,16 +14,20 @@ builder
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAutoMapper(typeof(DiscountProfile));
+builder.Services.AddAutoMapper(typeof(DiscountProfile)).AddAutoMapper(typeof(LoyaltyProfile));
 
 builder.Services.AddScoped<IDiscountContext>(
     provider => provider.GetRequiredService<DiscountContext>()
 );
+builder.Services.AddScoped<ILoyaltyContext>(provider => provider.GetRequiredService<LoyaltyContext>());
 builder.Services.AddDbContext<DiscountContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("DAPADatabase"))
 );
+builder.Services.AddDbContext<LoyaltyContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DAPADatabase")));
 
 builder.Services.AddScoped<IDiscountRepository, DiscountDatabaseRepository>();
+builder.Services.AddScoped<ILoyaltyRepository, LoyaltyDatabaseRepository>();
 
 var app = builder.Build();
 
@@ -46,8 +49,10 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var discountContext = services.GetRequiredService<IDiscountContext>();
+    var loyaltyContext = services.GetRequiredService<ILoyaltyContext>();
 
     discountContext.Instance.Database.Migrate();
+    loyaltyContext.Instance.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
