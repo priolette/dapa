@@ -12,9 +12,9 @@ public class DiscountProfile : Profile
 
     private void MapRequests()
     {
-        CreateMap<DiscountCreateRequest, Discount>().ForMember(x => x.ID, opt => opt.Ignore());
+        CreateMap<DiscountCreateRequest, Discount>().ForMember(x => x.Id, opt => opt.Ignore());
         CreateMap<DiscountFindRequest, Discount>();
         CreateMap<DiscountUpdateRequest, Discount>();
-        CreateMap<int, Discount>().ForMember(x => x.ID, opt => opt.MapFrom(x => x));
+        CreateMap<int, Discount>(MemberList.None).ForMember(x => x.Id, opt => opt.MapFrom(x => x));
     }
 }
