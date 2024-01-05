@@ -41,14 +41,9 @@ public class DiscountAndLoyaltyController : ControllerBase
     [HttpPost("discount")]
     public async Task<ActionResult<Discount>> CreateDiscount(DiscountCreateRequest request)
     {
-        var discount = new Discount
-        {
-            Name = request.Name,
-            Size = request.Size,
-            Start_date = request.Start_date,
-            End_date = request.End_date,
-            Applicable_Category = request.Applicable_Category
-        };
+        var discount = _mapper.Map<Discount>(request);
+        if (discount is null)
+            return StatusCode(StatusCodes.Status500InternalServerError);
 
         try
         {
@@ -62,7 +57,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         return CreatedAtAction(nameof(GetDiscountById),
             new
             {
-                discount.ID
+                ID = discount.Id
             },
             discount);
     }
@@ -74,7 +69,7 @@ public class DiscountAndLoyaltyController : ControllerBase
 
         try
         {
-            discount = await _discountRepository.GetByPropertyAsync(d => d.ID == id);
+            discount = await _discountRepository.GetByPropertyAsync(d => d.Id == id);
         }
         catch (Exception)
         {
@@ -95,7 +90,7 @@ public class DiscountAndLoyaltyController : ControllerBase
 
         try
         {
-            discount = await _discountRepository.GetByPropertyAsync(d => d.ID == id);
+            discount = await _discountRepository.GetByPropertyAsync(d => d.Id == id);
         }
         catch (Exception)
         {
@@ -119,7 +114,7 @@ public class DiscountAndLoyaltyController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        return Ok(discount);
+        return Ok(newDiscount);
     }
 
     [HttpDelete("discount/{id:int}")]
@@ -128,7 +123,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         bool discountExists;
         try
         {
-            discountExists = await _discountRepository.ExistsByPropertyAsync(d => d.ID == id);
+            discountExists = await _discountRepository.ExistsByPropertyAsync(d => d.Id == id);
         }
         catch (Exception)
         {
@@ -141,7 +136,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         var discount = _mapper.Map<Discount>(id);
         if (discount is null)
             return StatusCode(StatusCodes.Status500InternalServerError);
-        
+
         try
         {
             await _discountRepository.DeleteAsync(discount);
@@ -177,8 +172,8 @@ public class DiscountAndLoyaltyController : ControllerBase
     {
         var loyalty = new Loyalty()
         {
-            Start_date = request.Start_date,
-            Discount = request.Discount
+            StartDate = request.Start_date,
+            DiscountId = request.Discount
         };
 
         try
@@ -193,7 +188,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         return CreatedAtAction(nameof(GetLoyaltyById),
             new
             {
-                loyalty.ID
+                ID = loyalty.Id
             },
             loyalty);
     }
@@ -205,7 +200,7 @@ public class DiscountAndLoyaltyController : ControllerBase
 
         try
         {
-            loyalty = await _loyaltyRepository.GetByPropertyAsync(l => l.ID == id);
+            loyalty = await _loyaltyRepository.GetByPropertyAsync(l => l.Id == id);
         }
         catch (Exception)
         {
@@ -226,7 +221,7 @@ public class DiscountAndLoyaltyController : ControllerBase
 
         try
         {
-            loyalty = await _loyaltyRepository.GetByPropertyAsync(d => d.ID == id);
+            loyalty = await _loyaltyRepository.GetByPropertyAsync(d => d.Id == id);
         }
         catch (Exception)
         {
@@ -259,7 +254,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         bool loyaltyExists;
         try
         {
-            loyaltyExists = await _loyaltyRepository.ExistsByPropertyAsync(l => l.ID == id);
+            loyaltyExists = await _loyaltyRepository.ExistsByPropertyAsync(l => l.Id == id);
         }
         catch (Exception)
         {

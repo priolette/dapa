@@ -5,32 +5,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAPA.Database;
 
-public class LoyaltyDatabaseRepository: ILoyaltyRepository
+public class LoyaltyDatabaseRepository : ILoyaltyRepository
 {
-    private readonly ILoyaltyContext _context;
+    private readonly IOrderContext _context;
 
-    public LoyaltyDatabaseRepository(ILoyaltyContext context)
+    public LoyaltyDatabaseRepository(IOrderContext context)
     {
         _context = context;
     }
-    
+
     public async Task<IEnumerable<Loyalty>> GetAllAsync()
     {
         return await _context.Loyalties.ToListAsync();
     }
-    
+
     public async Task<IEnumerable<Loyalty>> GetAllAsync(LoyaltyFindRequest request)
     {
         var query = _context.Loyalties.AsQueryable();
 
         if (request.ID.HasValue)
-            query = query.Where(l => l.ID == request.ID.Value);
+            query = query.Where(l => l.Id == request.ID.Value);
 
         if (!string.IsNullOrEmpty(request.StartDate))
-            query = query.Where(l => l.Start_date == request.StartDate);
+            query = query.Where(l => l.StartDate == request.StartDate);
 
         if (request.Discount.HasValue)
-            query = query.Where(l => l.Discount == request.Discount);
+            query = query.Where(l => l.DiscountId == request.Discount);
 
         return await query.ToListAsync();
     }

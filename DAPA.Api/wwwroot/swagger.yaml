@@ -77,17 +77,19 @@ paths:
           description: Filter discounts by size
           schema:
             type: integer
-        - name: start_date
+        - name: startDate
           in: query
           description: Filter discounts by start date
           schema:
             type: string
-        - name: end_date
+            format: date-time
+        - name: endDate
           in: query
           description: Filter discounts by end date
           schema:
             type: string
-        - name: applicable_category
+            format: date-time
+        - name: applicableCategory
           in: query
           description: Filter discounts by applicable category
           schema:
@@ -363,7 +365,7 @@ paths:
           description: Filter products by description
           schema:
             type: string
-        - name: discountID
+        - name: discountId
           in: query
           description: Filter products by discount ID
           schema:
@@ -480,12 +482,12 @@ paths:
         - Product_Carts
       summary: Get product carts based on filter criteria
       parameters:
-        - name: orderID
+        - name: orderId
           in: query
           description: Filter product carts by order ID
           schema:
             type: integer
-        - name: productID
+        - name: productId
           in: query
           description: Filter product carts by product ID
           schema:
@@ -503,7 +505,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Product_Cart'
+                  $ref: '#/components/schemas/ProductCart'
         '400':
           description: Bad request
 
@@ -518,14 +520,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Product_Cart'
+              $ref: '#/components/schemas/ProductCart'
       responses:
         '201':
           description: Product cart created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product_Cart'
+                $ref: '#/components/schemas/ProductCart'
         '400':
           description: Bad request
 
@@ -535,13 +537,13 @@ paths:
         - Product_Carts
       summary: Get a product cart by order ID and product ID
       parameters:
-        - name: orderID
+        - name: orderId
           in: path
           required: true
           description: Order ID of the product cart
           schema:
             type: integer
-        - name: productID
+        - name: productId
           in: path
           required: true
           description: Product ID of the product cart
@@ -553,7 +555,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product_Cart'
+                $ref: '#/components/schemas/ProductCart'
         '400':
           description: Bad request
 
@@ -562,13 +564,13 @@ paths:
         - Product_Carts
       summary: Update a product cart by order ID and product ID
       parameters:
-        - name: orderID
+        - name: orderId
           in: path
           required: true
           description: Order ID of the product cart
           schema:
             type: integer
-        - name: productID
+        - name: productId
           in: path
           required: true
           description: Product ID of the product cart
@@ -580,14 +582,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Product_Cart'
+              $ref: '#/components/schemas/ProductCart'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product_Cart'
+                $ref: '#/components/schemas/ProductCart'
         '400':
           description: Bad request
 
@@ -596,13 +598,13 @@ paths:
         - Product_Carts
       summary: Delete a product cart by order ID and product ID
       parameters:
-        - name: orderID
+        - name: orderId
           in: path
           required: true
           description: Order ID of the product cart
           schema:
             type: integer
-        - name: productID
+        - name: productId
           in: path
           required: true
           description: Product ID of the product cart
@@ -620,12 +622,12 @@ paths:
         - Service_Carts
       summary: Get service carts based on filter criteria
       parameters:
-        - name: orderID
+        - name: orderId
           in: query
           description: Filter service carts by order ID
           schema:
             type: integer
-        - name: serviceID
+        - name: serviceId
           in: query
           description: Filter service carts by service ID
           schema:
@@ -643,7 +645,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Service_Cart'
+                  $ref: '#/components/schemas/ServiceCart'
         '400':
           description: Bad request
 
@@ -658,14 +660,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Service_Cart'
+              $ref: '#/components/schemas/ServiceCart'
       responses:
         '201':
           description: Service cart created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Service_Cart'
+                $ref: '#/components/schemas/ServiceCart'
         '400':
           description: Bad request
 
@@ -675,13 +677,13 @@ paths:
         - Service_Carts
       summary: Get a service cart by order ID and service ID
       parameters:
-        - name: orderID
+        - name: orderId
           in: path
           required: true
           description: Order ID of the service cart
           schema:
             type: integer
-        - name: serviceID
+        - name: serviceId
           in: path
           required: true
           description: Service ID of the service cart
@@ -693,7 +695,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Service_Cart'
+                $ref: '#/components/schemas/ServiceCart'
         '400':
           description: Bad request
 
@@ -702,13 +704,13 @@ paths:
         - Service_Carts
       summary: Update a service cart by order ID and service ID
       parameters:
-        - name: orderID
+        - name: orderId
           in: path
           required: true
           description: Order ID of the service cart
           schema:
             type: integer
-        - name: serviceID
+        - name: serviceId
           in: path
           required: true
           description: Service ID of the service cart
@@ -720,14 +722,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Service_Cart'
+              $ref: '#/components/schemas/ServiceCart'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Service_Cart'
+                $ref: '#/components/schemas/ServiceCart'
         '400':
           description: Bad request
 
@@ -736,13 +738,13 @@ paths:
         - Service_Carts
       summary: Delete a service cart by order ID and service ID
       parameters:
-        - name: orderID
+        - name: orderId
           in: path
           required: true
           description: Order ID of the service cart
           schema:
             type: integer
-        - name: serviceID
+        - name: serviceId
           in: path
           required: true
           description: Service ID of the service cart
@@ -765,7 +767,7 @@ paths:
           description: Filter orders by ID
           schema:
             type: integer
-        - name: clientID
+        - name: clientId
           in: query
           description: Filter orders by client ID
           schema:
@@ -775,11 +777,12 @@ paths:
           description: Filter orders by creation date
           schema:
             type: string
+            format: date-time
         - name: status
           in: query
           description: Filter orders by status
           schema:
-            type: string
+            $ref: "#/components/schemas/Status"
       responses:
         '200':
           description: Successful response
@@ -892,7 +895,7 @@ paths:
           description: Filter payments by ID
           schema:
             type: integer
-        - name: orderID
+        - name: orderId
           in: query
           description: Filter payments by order ID
           schema:
@@ -902,11 +905,12 @@ paths:
           description: Filter payments by date
           schema:
             type: string
+            format: date-time
         - name: method
           in: query
           description: Filter payments by method
           schema:
-            type: string
+            $ref: "#/components/schemas/PaymentMethod"
       responses:
         '200':
           description: Successful response
@@ -1029,7 +1033,7 @@ paths:
           description: Filter clients by surname
           schema:
             type: string
-        - name: loyaltyID
+        - name: loyaltyId
           in: query
           description: Filter clients by loyalty ID
           schema:
@@ -1044,6 +1048,7 @@ paths:
           description: Filter clients by email
           schema:
             type: string
+            format: email
       responses:
         '200':
           description: Successful response
@@ -1161,6 +1166,7 @@ paths:
           description: Filter loyalties by start date
           schema:
             type: string
+            format: date-time
         - name: discount
           in: query
           description: Filter loyalties by discount
@@ -1278,17 +1284,17 @@ paths:
           description: Filter reservations by ID
           schema:
             type: integer
-        - name: clientID
+        - name: clientId
           in: query
           description: Filter reservations by client ID
           schema:
             type: integer
-        - name: serviceID
+        - name: serviceId
           in: query
           description: Filter reservations by service ID
           schema:
             type: integer
-        - name: staffID
+        - name: staffId
           in: query
           description: Filter reservations by staff ID
           schema:
@@ -1430,7 +1436,7 @@ paths:
           description: Filter staff members by position
           schema:
             type: string
-        - name: roleID
+        - name: roleId
           in: query
           description: Filter staff members by role ID
           schema:
@@ -1687,23 +1693,25 @@ components:
     Discount:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
         Name:
           type: string
         Size:
           type: integer
-        Start_date:
+        StartDate:
           type: string
-        End_date:
+          format: date-time
+        EndDate:
           type: string
-        Applicable_Category:
+          format: date-time
+        ApplicableCategory:
           type: string
 
     Service:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
         Title:
           type: string
@@ -1713,19 +1721,20 @@ components:
           type: integer
         Description:
           type: string
-        Discount_ID:
+        DiscountId:
           type: integer
         Category:
           type: string
-        Performer_ID:
+        PerformerId:
           type: integer
-        Service_DateTime:
+        ServiceDateTime:
           type: string
+          format: date-time
 
     Product:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
         Title:
           type: string
@@ -1733,27 +1742,27 @@ components:
           type: number
         Description:
           type: string
-        Discount_ID:
+        DiscountId:
           type: integer
         Category:
           type: string
 
-    Product_Cart:
+    ProductCart:
       type: object
       properties:
-        Order_ID:
+        OrderId:
           type: integer
-        Product_ID:
+        ProductId:
           type: integer
         Quantity:
           type: integer
 
-    Service_Cart:
+    ServiceCart:
       type: object
       properties:
-        Order_ID:
+        OrderId:
           type: integer
-        Service_ID:
+        ServiceId:
           type: integer
         Quantity:
           type: integer
@@ -1761,22 +1770,18 @@ components:
     Order:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
-        Client_ID:
+        ClientId:
           type: integer
-        Creation_date:
+        CreationDate:
           type: string
+          format: date-time
         Status:
-          type: string
-          enum:
-            - canceled
-            - completed
-            - in progress
-            - paid
-        Staff_ID:
+          $ref: "#/components/schemas/Status"
+        StaffId:
           type: integer
-        Discount_ID:
+        DiscountId:
           type: integer
         Details:
           type: string
@@ -1792,20 +1797,16 @@ components:
     Payment:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
-        Order_ID:
+        OrderId:
           type: integer
         Date:
           type: string
         Method:
-          type: string
-          enum:
-            - Card
-            - Cash
-            - Coupon
+          $ref: "#/components/schemas/PaymentMethod"
 
-    Payment_method:
+    PaymentMethod:
       type: string
       enum:
         - Card
@@ -1815,47 +1816,50 @@ components:
     Client:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
         Name:
           type: string
         Surname:
           type: string
-        Loyalty_ID:
+        LoyaltyId:
           type: integer
-        Phone_Number:
+        PhoneNumber:
           type: integer
         Email:
           type: string
+          format: email
 
     Loyalty:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
-        Start_date:
+        StartDate:
           type: string
+          format: date-time
         Discount:
           type: integer
 
     Reservation:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
-        Client_ID:
+        ClientId:
           type: integer
-        Service_ID:
+        ServiceId:
           type: integer
-        Staff_ID:
+        StaffId:
           type: integer
-        Date_Time:
+        DateTime:
           type: string
+          format: date-time
 
     Staff:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
         Name:
           type: string
@@ -1865,25 +1869,25 @@ components:
           type: integer
         Position:
           type: string
-        RoleID:
+        RoleId:
           type: integer
 
     Role:
       type: object
       properties:
-        ID:
+        Id:
           type: integer
         Title:
           type: string
-        Permission_View_Order:
+        PermissionViewOrder:
           type: boolean
-        Permission_Manage_Order:
+        PermissionManageOrder:
           type: boolean
-        Permission_Create_Discount:
+        PermissionCreateDiscount:
           type: boolean
-        Permission_Manage_Items:
+        PermissionManageItems:
           type: boolean
-        Permission_Manage_Services:
+        PermissionManageServices:
           type: boolean
-        is_owner:
+        IsOwner:
           type: boolean

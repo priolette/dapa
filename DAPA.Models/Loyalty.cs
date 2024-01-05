@@ -4,9 +4,11 @@ namespace DAPA.Models;
 
 public class Loyalty
 {
-    public int ID { get; set; }
-    
-    public string? Start_date { get; set; }
-    
-    public int Discount { get; set; }
+    public int Id { get; set; }
+
+    public string? StartDate { get; set; }
+
+    public int DiscountId { get; set; }
+
+    public Discount Discount { get; set; } = null!;
 }
