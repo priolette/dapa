@@ -24,4 +24,4 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       - name: Run API tests
         run: |
-          postman api lint 52674036-0136-4583-a540-e5ce6a411edc
+          postman api lint 52674036-0136-4583-a540-e5ce6a411edc --integration-id 155724
