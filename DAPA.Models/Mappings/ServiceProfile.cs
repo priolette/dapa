@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DAPA.Models.Public;
+using DAPA.Models.Public.Services;
 
 namespace DAPA.Models.Mappings;
 
@@ -12,7 +12,8 @@ public class ServiceProfile : Profile
 
     private void MapRequests()
     {
-        CreateMap<ServiceCreateRequest, Service>().ForMember(x => x.Id, opt => opt.Ignore());
+        CreateMap<ServiceCreateRequest, Service>().ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.Discount, opt => opt.Ignore());
         CreateMap<ServiceFindRequest, Service>();
         CreateMap<ServiceUpdateRequest, Service>();
         CreateMap<int, Service>(MemberList.None).ForMember(x => x.Id, opt => opt.MapFrom(x => x));

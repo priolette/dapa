@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using DAPA.Models;
-using DAPA.Models.Public;
+using DAPA.Models.Public.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAPA.Database;
+namespace DAPA.Database.Services;
 
 public class ServiceDatabaseRepository : IServiceRepository
 {

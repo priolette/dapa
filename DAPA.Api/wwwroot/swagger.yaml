@@ -531,7 +531,7 @@ paths:
         '400':
           description: Bad request
 
-  /product_cart/{orderID}/{productID}:
+  /product_cart/{orderId}/{productId}:
     get:
       tags:
         - Product_Carts
@@ -671,7 +671,7 @@ paths:
         '400':
           description: Bad request
 
-  /service_cart/{orderID}/{serviceID}:
+  /service_cart/{orderId}/{serviceId}:
     get:
       tags:
         - Service_Carts

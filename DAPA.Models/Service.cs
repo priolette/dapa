@@ -14,6 +14,8 @@ public class Service
 
     public int DiscountId { get; set; }
 
+    public Discount Discount { get; set; } = null!;
+
     public string? Category { get; set; }
 
     public int PerformerId { get; set; }

@@ -22,6 +22,36 @@ namespace DAPA.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("DAPA.Models.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<int>("LoyaltyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LoyaltyId");
+
+                    b.ToTable("Clients");
+                });
+
             modelBuilder.Entity("DAPA.Models.Discount", b =>
                 {
                     b.Property<int>("Id")
@@ -108,6 +138,17 @@ namespace DAPA.Database.Migrations
                     b.HasIndex("DiscountId");
 
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("DAPA.Models.Client", b =>
+                {
+                    b.HasOne("DAPA.Models.Loyalty", "Loyalty")
+                        .WithMany()
+                        .HasForeignKey("LoyaltyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Loyalty");
                 });
 
             modelBuilder.Entity("DAPA.Models.Loyalty", b =>

@@ -1,5 +1,6 @@
 using AutoMapper;
 using DAPA.Models.Public;
+using DAPA.Models.Public.Discounts;
 
 namespace DAPA.Models.Mappings;
 
