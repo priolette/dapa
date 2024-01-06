@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using DAPA.Database;
+using DAPA.Database.Discounts;
+using DAPA.Database.Services;
 using DAPA.Models;
 using DAPA.Models.Public;
+using DAPA.Models.Public.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DAPA.Api.Controllers;

@@ -10,5 +10,5 @@ public class Loyalty
 
     public int DiscountId { get; set; }
 
-    public Discount Discount { get; set; } = null!;
+    [JsonIgnore] public Discount Discount { get; set; } = null!;
 }

@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using DAPA.Models;
-using DAPA.Models.Public;
+using DAPA.Models.Public.Discounts;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAPA.Database;
+namespace DAPA.Database.Discounts;
 
 public class DiscountDatabaseRepository : IDiscountRepository
 {
@@ -23,8 +23,8 @@ public class DiscountDatabaseRepository : IDiscountRepository
     {
         var query = _context.Discounts.AsQueryable();
 
-        if (request.ID.HasValue)
-            query = query.Where(d => d.Id == request.ID.Value);
+        if (request.Id.HasValue)
+            query = query.Where(d => d.Id == request.Id.Value);
 
         if (!string.IsNullOrEmpty(request.Name))
             query = query.Where(d => d.Name == request.Name);
@@ -32,14 +32,14 @@ public class DiscountDatabaseRepository : IDiscountRepository
         if (request.Size.HasValue)
             query = query.Where(d => d.Size == request.Size.Value);
 
-        if (!string.IsNullOrEmpty(request.Start_date))
-            query = query.Where(d => d.StartDate == request.Start_date);
+        if (!string.IsNullOrEmpty(request.StartDate))
+            query = query.Where(d => d.StartDate == request.StartDate);
 
-        if (!string.IsNullOrEmpty(request.End_date))
-            query = query.Where(d => d.EndDate == request.End_date);
+        if (!string.IsNullOrEmpty(request.EndDate))
+            query = query.Where(d => d.EndDate == request.EndDate);
 
-        if (!string.IsNullOrEmpty(request.Applicable_Category))
-            query = query.Where(d => d.ApplicableCategory == request.Applicable_Category);
+        if (!string.IsNullOrEmpty(request.ApplicableCategory))
+            query = query.Where(d => d.ApplicableCategory == request.ApplicableCategory);
 
         return await query.ToListAsync();
     }

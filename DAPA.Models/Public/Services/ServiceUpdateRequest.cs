@@ -1,4 +1,4 @@
-﻿namespace DAPA.Models.Public;
+﻿namespace DAPA.Models.Public.Services;
 
 public class ServiceUpdateRequest
 {

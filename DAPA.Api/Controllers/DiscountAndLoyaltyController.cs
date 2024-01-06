@@ -1,7 +1,11 @@
 using AutoMapper;
 using DAPA.Database;
+using DAPA.Database.Discounts;
+using DAPA.Database.Loyalties;
 using DAPA.Models;
 using DAPA.Models.Public;
+using DAPA.Models.Public.Discounts;
+using DAPA.Models.Public.Loyalties;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DAPA.Api.Controllers;
@@ -24,7 +28,7 @@ public class DiscountAndLoyaltyController : ControllerBase
 
     #region Discounts
 
-    [HttpGet("discounts")]
+    [HttpGet("/discounts")]
     public async Task<ActionResult<IEnumerable<Discount>>> GetAllDiscounts([FromQuery] DiscountFindRequest request)
     {
         try
@@ -38,7 +42,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         }
     }
 
-    [HttpPost("discount")]
+    [HttpPost("/discount")]
     public async Task<ActionResult<Discount>> CreateDiscount(DiscountCreateRequest request)
     {
         var discount = _mapper.Map<Discount>(request);
@@ -62,7 +66,7 @@ public class DiscountAndLoyaltyController : ControllerBase
             discount);
     }
 
-    [HttpGet("discount/{id:int}")]
+    [HttpGet("/discount/{id:int}")]
     public async Task<ActionResult<Discount>> GetDiscountById(int id)
     {
         Discount? discount;
@@ -82,7 +86,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         return Ok(discount);
     }
 
-    [HttpPut("discount/{id:int}")]
+    [HttpPut("/discount/{id:int}")]
     public async Task<ActionResult<Discount>> UpdateDiscount(int id,
         [FromBody] DiscountUpdateRequest request)
     {
@@ -117,7 +121,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         return Ok(newDiscount);
     }
 
-    [HttpDelete("discount/{id:int}")]
+    [HttpDelete("/discount/{id:int}")]
     public async Task<ActionResult> DeleteDiscount(int id)
     {
         bool discountExists;
@@ -153,7 +157,7 @@ public class DiscountAndLoyaltyController : ControllerBase
 
     #region Loyalties
 
-    [HttpGet("loyalties")]
+    [HttpGet("/loyalties")]
     public async Task<ActionResult<IEnumerable<Loyalty>>> GetAllLoyalties([FromQuery] LoyaltyFindRequest request)
     {
         try
@@ -167,14 +171,27 @@ public class DiscountAndLoyaltyController : ControllerBase
         }
     }
 
-    [HttpPost("loyalty")]
+    [HttpPost("/loyalty")]
     public async Task<ActionResult<Loyalty>> CreateLayout(LoyaltyCreateRequest request)
     {
-        var loyalty = new Loyalty()
+        bool discountExists;
+        try
         {
-            StartDate = request.Start_date,
-            DiscountId = request.Discount
-        };
+            discountExists = await _discountRepository.ExistsByPropertyAsync(d => d.Id == request.Discount);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (!discountExists)
+            return NotFound($"Could not find discount with ID: {request.Discount}");
+
+        var loyalty = _mapper.Map<Loyalty>(request);
+        if (loyalty is null)
+            return StatusCode(StatusCodes.Status500InternalServerError);
+
+        Console.WriteLine(loyalty.DiscountId.ToString());
 
         try
         {
@@ -193,7 +210,7 @@ public class DiscountAndLoyaltyController : ControllerBase
             loyalty);
     }
 
-    [HttpGet("loyalty/{id:int}")]
+    [HttpGet("/loyalty/{id:int}")]
     public async Task<ActionResult<Loyalty>> GetLoyaltyById(int id)
     {
         Loyalty? loyalty;
@@ -213,7 +230,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         return Ok(loyalty);
     }
 
-    [HttpPut("loyalty/{id:int}")]
+    [HttpPut("/loyalty/{id:int}")]
     public async Task<ActionResult<Loyalty>> UpdateLoyalty(int id,
         [FromBody] LoyaltyUpdateRequest request)
     {
@@ -248,7 +265,7 @@ public class DiscountAndLoyaltyController : ControllerBase
         return Ok(loyalty);
     }
 
-    [HttpDelete("loyalty/{id:int}")]
+    [HttpDelete("/loyalty/{id:int}")]
     public async Task<ActionResult> DeleteLoyalty(int id)
     {
         bool loyaltyExists;

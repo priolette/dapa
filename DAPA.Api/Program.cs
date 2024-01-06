@@ -1,4 +1,8 @@
 using DAPA.Database;
+using DAPA.Database.Clients;
+using DAPA.Database.Discounts;
+using DAPA.Database.Loyalties;
+using DAPA.Database.Services;
 using DAPA.Models.Mappings;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +16,9 @@ builder
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAutoMapper(typeof(DiscountProfile), typeof(LoyaltyProfile));
+builder.Services.AddAutoMapper(typeof(DiscountProfile), typeof(LoyaltyProfile), typeof(ServiceProfile),
+    typeof(ClientProfile)
+);
 
 builder.Services.AddScoped<IOrderContext>(
     provider => provider.GetRequiredService<OrderContext>()
@@ -25,6 +31,7 @@ builder.Services.AddDbContext<OrderContext>(
 builder.Services.AddScoped<IDiscountRepository, DiscountDatabaseRepository>();
 builder.Services.AddScoped<ILoyaltyRepository, LoyaltyDatabaseRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceDatabaseRepository>();
+builder.Services.AddScoped<IClientRepository, ClientDatabaseRepository>();
 
 var app = builder.Build();
 

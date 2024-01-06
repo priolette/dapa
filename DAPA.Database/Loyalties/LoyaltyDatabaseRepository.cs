@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using DAPA.Models;
-using DAPA.Models.Public;
+using DAPA.Models.Public.Loyalties;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAPA.Database;
+namespace DAPA.Database.Loyalties;
 
 public class LoyaltyDatabaseRepository : ILoyaltyRepository
 {
@@ -23,8 +23,8 @@ public class LoyaltyDatabaseRepository : ILoyaltyRepository
     {
         var query = _context.Loyalties.AsQueryable();
 
-        if (request.ID.HasValue)
-            query = query.Where(l => l.Id == request.ID.Value);
+        if (request.Id.HasValue)
+            query = query.Where(l => l.Id == request.Id.Value);
 
         if (!string.IsNullOrEmpty(request.StartDate))
             query = query.Where(l => l.StartDate == request.StartDate);
