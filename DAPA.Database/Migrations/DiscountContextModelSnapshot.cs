@@ -101,6 +101,40 @@ namespace DAPA.Database.Migrations
                     b.ToTable("Loyalties");
                 });
 
+            modelBuilder.Entity("DAPA.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionCreateDiscount")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionManageItems")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionManageOrder")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionManageServices")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionViewOrder")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("DAPA.Models.Service", b =>
                 {
                     b.Property<int>("Id")

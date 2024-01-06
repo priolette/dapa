@@ -9,6 +9,7 @@ public interface IOrderContext
     DbSet<Loyalty> Loyalties { get; }
     DbSet<Service> Services { get; }
     DbSet<Client> Clients { get; }
+    DbSet<Role> Roles { get; }
     DbContext Instance { get; }
 }
 
@@ -18,6 +19,7 @@ public class OrderContext : DbContext, IOrderContext
     public DbSet<Loyalty> Loyalties { get; private set; } = null!;
     public DbSet<Service> Services { get; private set; } = null!;
     public DbSet<Client> Clients { get; private set; } = null!;
+    public DbSet<Role> Roles { get; private set; } = null!;
     public DbContext Instance => this;
 
     public OrderContext(DbContextOptions<OrderContext> options)
