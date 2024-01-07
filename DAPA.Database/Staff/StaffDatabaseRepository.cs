@@ -1,42 +1,73 @@
 ﻿using System.Linq.Expressions;
 using DAPA.Models.Public.Staff;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAPA.Database.Staff;
 
 public class StaffDatabaseRepository : IStaffRepository
 {
-    public async Task<IEnumerable<Models.Staff>> GetAllAsync()
+    private readonly IOrderContext _context;
+
+    public StaffDatabaseRepository(IOrderContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public async Task<IEnumerable<Models.Staff>> GetAllAsync(StaffCreateRequest request)
+    public async Task<IEnumerable<Models.Staff>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _context.Staff.ToListAsync();
+    }
+
+    public async Task<IEnumerable<Models.Staff>> GetAllAsync(StaffFindRequest request)
+    {
+        var query = _context.Staff.AsQueryable();
+
+        if (request.Id.HasValue)
+            query = query.Where(s => s.Id == request.Id);
+
+        if (!string.IsNullOrWhiteSpace(request.Name))
+            query = query.Where(s => s.Name == request.Name);
+
+        if (!string.IsNullOrWhiteSpace(request.Surname))
+            query = query.Where(s => s.Surname == request.Surname);
+
+        if (request.Password.HasValue)
+            query = query.Where(s => s.Password == request.Password);
+
+        if (!string.IsNullOrWhiteSpace(request.Position))
+            query = query.Where(s => s.Position == request.Position);
+
+        if (request.RoleId.HasValue)
+            query = query.Where(s => s.RoleId == request.RoleId);
+
+        return await query.ToListAsync();
     }
 
     public async Task<Models.Staff?> GetByPropertyAsync(Expression<Func<Models.Staff, bool>> expression)
     {
-        throw new NotImplementedException();
+        return await _context.Staff.FirstOrDefaultAsync(expression);
     }
 
     public async Task<bool> ExistsByPropertyAsync(Expression<Func<Models.Staff, bool>> expression)
     {
-        throw new NotImplementedException();
+        return await _context.Staff.AnyAsync(expression);
     }
 
     public async Task InsertAsync(Models.Staff entity)
     {
-        throw new NotImplementedException();
+        await _context.Staff.AddAsync(entity);
+        await _context.Instance.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Models.Staff entity)
     {
-        throw new NotImplementedException();
+        _context.Staff.Update(entity);
+        await _context.Instance.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Models.Staff entity)
     {
-        throw new NotImplementedException();
+        _context.Staff.Remove(entity);
+        await _context.Instance.SaveChangesAsync();
     }
 }

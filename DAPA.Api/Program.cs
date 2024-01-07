@@ -6,6 +6,7 @@ using DAPA.Database.Roles;
 using DAPA.Database.Services;
 using DAPA.Database.Staff;
 using DAPA.Models.Mappings;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,6 +60,15 @@ if (app.Environment.IsDevelopment())
 
     discountContext.Instance.Database.Migrate();
 }
+
+app.UseExceptionHandler(c => c.Run(async context =>
+{
+    var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
+    var response = new { message = exception?.Message };
+    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+    await context.Response.WriteAsJsonAsync(response);
+    Console.WriteLine(exception?.Message);
+}));
 
 app.UseHttpsRedirection();
 
