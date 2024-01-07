@@ -24,7 +24,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("/products")]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] ProductFindRequest request)
+    public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts([FromQuery] ProductFindRequest request)
     {
         try
         {

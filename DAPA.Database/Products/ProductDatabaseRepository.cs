@@ -7,9 +7,9 @@ namespace DAPA.Database.Products;
 
 public class ProductDatabaseRepository : IProductRepository
 {
-    private readonly OrderContext _context;
+    private readonly IOrderContext _context;
 
-    public ProductDatabaseRepository(OrderContext context)
+    public ProductDatabaseRepository(IOrderContext context)
     {
         _context = context;
     }
@@ -57,18 +57,18 @@ public class ProductDatabaseRepository : IProductRepository
     public async Task InsertAsync(Product entity)
     {
         await _context.Products.AddAsync(entity);
-        await _context.SaveChangesAsync();
+        await _context.Instance.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Product entity)
     {
         _context.Products.Update(entity);
-        await _context.SaveChangesAsync();
+        await _context.Instance.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Product entity)
     {
         _context.Products.Remove(entity);
-        await _context.SaveChangesAsync();
+        await _context.Instance.SaveChangesAsync();
     }
 }
