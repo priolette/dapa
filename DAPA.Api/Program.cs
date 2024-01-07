@@ -3,6 +3,7 @@ using DAPA.Database.Clients;
 using DAPA.Database.Discounts;
 using DAPA.Database.Loyalties;
 using DAPA.Database.Products;
+using DAPA.Database.Reservations;
 using DAPA.Database.Roles;
 using DAPA.Database.Services;
 using DAPA.Database.Staff;
@@ -21,7 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(DiscountProfile), typeof(LoyaltyProfile), typeof(ServiceProfile),
-    typeof(ClientProfile), typeof(StaffProfile), typeof(RoleProfile), typeof(ProductProfile)
+    typeof(ClientProfile), typeof(StaffProfile), typeof(RoleProfile), typeof(ProductProfile), typeof(ReservationProfile)
 );
 
 builder.Services.AddScoped<IOrderContext>(
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IClientRepository, ClientDatabaseRepository>();
 builder.Services.AddScoped<IStaffRepository, StaffDatabaseRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleDatabaseRepository>();
 builder.Services.AddScoped<IProductRepository, ProductDatabaseRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationDatabaseRepository>();
 
 var app = builder.Build();
 

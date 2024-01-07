@@ -24,14 +24,14 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("/products")]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] ProductFindRequest request)
+    public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts([FromQuery] ProductFindRequest request)
     {
         try
         {
             var products = await _productRepository.GetAllAsync(request);
             return Ok(products);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
