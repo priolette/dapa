@@ -31,7 +31,7 @@ public class ProductController : ControllerBase
             var products = await _productRepository.GetAllAsync(request);
             return Ok(products);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
