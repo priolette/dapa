@@ -101,6 +101,36 @@ namespace DAPA.Database.Migrations
                     b.ToTable("Loyalties");
                 });
 
+            modelBuilder.Entity("DAPA.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("integer");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiscountId");
+
+                    b.ToTable("Products");
+                });
+
             modelBuilder.Entity("DAPA.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -216,6 +246,17 @@ namespace DAPA.Database.Migrations
                 });
 
             modelBuilder.Entity("DAPA.Models.Loyalty", b =>
+                {
+                    b.HasOne("DAPA.Models.Discount", "Discount")
+                        .WithMany()
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("DAPA.Models.Product", b =>
                 {
                     b.HasOne("DAPA.Models.Discount", "Discount")
                         .WithMany()

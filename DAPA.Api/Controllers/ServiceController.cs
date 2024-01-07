@@ -141,7 +141,7 @@ public class ServiceController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        return Ok(service);
+        return Ok(newService);
     }
 
     [HttpDelete("{id:int}")]
