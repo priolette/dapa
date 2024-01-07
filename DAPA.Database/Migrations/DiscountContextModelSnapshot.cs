@@ -101,6 +101,40 @@ namespace DAPA.Database.Migrations
                     b.ToTable("Loyalties");
                 });
 
+            modelBuilder.Entity("DAPA.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionCreateDiscount")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionManageItems")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionManageOrder")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionManageServices")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("PermissionViewOrder")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("DAPA.Models.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -140,6 +174,36 @@ namespace DAPA.Database.Migrations
                     b.ToTable("Services");
                 });
 
+            modelBuilder.Entity("DAPA.Models.Staff", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Password")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Position")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Staff");
+                });
+
             modelBuilder.Entity("DAPA.Models.Client", b =>
                 {
                     b.HasOne("DAPA.Models.Loyalty", "Loyalty")
@@ -171,6 +235,17 @@ namespace DAPA.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("DAPA.Models.Staff", b =>
+                {
+                    b.HasOne("DAPA.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
                 });
 #pragma warning restore 612, 618
         }

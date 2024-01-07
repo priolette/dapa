@@ -59,7 +59,7 @@ public class ServiceController : ControllerBase
         }
 
         var service = _mapper.Map<Service>(request);
-        if (service == null)
+        if (service is null)
             return StatusCode(StatusCodes.Status500InternalServerError);
 
         try
@@ -88,7 +88,7 @@ public class ServiceController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        if (service == null)
+        if (service is null)
             return NotFound($"Could not find service with ID: {id}");
 
         return Ok(service);
@@ -108,7 +108,7 @@ public class ServiceController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        if (service == null)
+        if (service is null)
         {
             return NotFound($"Could not find service with ID: {id}");
         }
@@ -129,7 +129,7 @@ public class ServiceController : ControllerBase
         }
 
         var newService = _mapper.Map(request, service);
-        if (newService == null)
+        if (newService is null)
             return StatusCode(StatusCodes.Status500InternalServerError);
 
         try
@@ -163,7 +163,7 @@ public class ServiceController : ControllerBase
         }
 
         var service = _mapper.Map<Service>(id);
-        if (service == null)
+        if (service is null)
             return StatusCode(StatusCodes.Status500InternalServerError);
 
         try
