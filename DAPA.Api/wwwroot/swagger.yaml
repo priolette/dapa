@@ -1789,10 +1789,10 @@ components:
     Status:
       type: string
       enum:
-        - canceled
-        - completed
-        - in progress
-        - paid
+        - Cancelled
+        - Completed
+        - InProgress
+        - Paid
 
     Payment:
       type: object
