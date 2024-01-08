@@ -1725,8 +1725,6 @@ components:
           type: integer
         Category:
           type: string
-        PerformerId:
-          type: integer
         ServiceDateTime:
           type: string
           format: date-time
@@ -1763,6 +1761,8 @@ components:
         OrderId:
           type: integer
         ServiceId:
+          type: integer
+        StaffId:
           type: integer
         Quantity:
           type: integer

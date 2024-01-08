@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DAPA.Database;
 using DAPA.Database.Discounts;
+using DAPA.Database.Orders;
 using DAPA.Database.Services;
 using DAPA.Models;
 using DAPA.Models.Public;
@@ -14,14 +15,18 @@ namespace DAPA.Api.Controllers;
 public class ServiceController : ControllerBase
 {
     private readonly IServiceRepository _serviceRepository;
+    private readonly IServiceCartRepository _serviceCartRepository;
     private readonly IDiscountRepository _discountRepository;
+    private readonly IOrderRepository _orderRepository;
     private readonly IMapper _mapper;
 
-    public ServiceController(IServiceRepository serviceRepository, IDiscountRepository discountRepository,
-        IMapper mapper)
+    public ServiceController(IServiceRepository serviceRepository, IServiceCartRepository serviceCartRepository,
+        IDiscountRepository discountRepository, IOrderRepository orderRepository, IMapper mapper)
     {
         _serviceRepository = serviceRepository;
+        _serviceCartRepository = serviceCartRepository;
         _discountRepository = discountRepository;
+        _orderRepository = orderRepository;
         _mapper = mapper;
     }
 
@@ -169,6 +174,179 @@ public class ServiceController : ControllerBase
         try
         {
             await _serviceRepository.DeleteAsync(service);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return NoContent();
+    }
+
+    [HttpGet("/service_carts")]
+    public async Task<ActionResult<IEnumerable<ServiceCart>>> GetAllServiceCarts(
+        [FromQuery] ServiceCartFindRequest request)
+    {
+        try
+        {
+            var serviceCarts = await _serviceCartRepository.GetAllAsync(request);
+            return Ok(serviceCarts);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPost("/service_cart")]
+    public async Task<ActionResult<ServiceCart>> CreateServiceCart(ServiceCartCreateRequest request)
+    {
+        // TODO: Add check for staff
+        bool serviceExists;
+        bool orderExists;
+        try
+        {
+            serviceExists = await _serviceRepository.ExistsByPropertyAsync(s => s.Id == request.ServiceId);
+            orderExists = await _orderRepository.ExistsByPropertyAsync(o => o.Id == request.OrderId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (!serviceExists)
+        {
+            return NotFound($"Could not find service with ID: {request.ServiceId}");
+        }
+
+        if (!orderExists)
+        {
+            return NotFound($"Could not find order with ID: {request.OrderId}");
+        }
+
+        var serviceCart = _mapper.Map<ServiceCart>(request);
+        if (serviceCart is null)
+            return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _serviceCartRepository.InsertAsync(serviceCart);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return CreatedAtAction(nameof(GetServiceCartById),
+            new { orderId = request.OrderId, serviceId = request.ServiceId }, serviceCart);
+    }
+
+    [HttpGet("/service_cart/{orderId:int}/{serviceId:int}")]
+    public async Task<ActionResult<ServiceCart>> GetServiceCartById(int orderId, int serviceId)
+    {
+        ServiceCart? serviceCart;
+
+        try
+        {
+            serviceCart = await _serviceCartRepository.GetByPropertyAsync(s =>
+                s.OrderId == orderId && s.ServiceId == serviceId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (serviceCart is null)
+            return NotFound($"Could not find service cart with order ID: {orderId} and service ID: {serviceId}");
+
+        return Ok(serviceCart);
+    }
+
+    [HttpPut("/service_cart/{orderId:int}/{serviceId:int}")]
+    public async Task<IActionResult> UpdateServiceCart(int orderId, int serviceId, ServiceCartUpdateRequest request)
+    {
+        ServiceCart? serviceCart;
+
+        try
+        {
+            serviceCart = await _serviceCartRepository.GetByPropertyAsync(s =>
+                s.OrderId == orderId && s.ServiceId == serviceId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (serviceCart is null)
+        {
+            return NotFound($"Could not find service cart with order ID: {orderId} and service ID: {serviceId}");
+        }
+
+        // TODO: Add check for staff
+        bool serviceExists;
+        bool orderExists;
+        try
+        {
+            serviceExists = await _serviceRepository.ExistsByPropertyAsync(s => s.Id == request.ServiceId);
+            orderExists = await _orderRepository.ExistsByPropertyAsync(o => o.Id == request.OrderId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (!serviceExists)
+        {
+            return NotFound($"Could not find service with ID: {request.ServiceId}");
+        }
+
+        if (!orderExists)
+        {
+            return NotFound($"Could not find order with ID: {request.OrderId}");
+        }
+
+        var newServiceCart = _mapper.Map(request, serviceCart);
+        if (newServiceCart is null)
+            return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _serviceCartRepository.UpdateAsync(serviceCart);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return Ok(newServiceCart);
+    }
+
+    [HttpDelete("/service_cart/{orderId:int}/{serviceId:int}")]
+    public async Task<IActionResult> DeleteServiceCart(int orderId, int serviceId)
+    {
+        bool serviceCartExists;
+        try
+        {
+            serviceCartExists = await _serviceCartRepository.ExistsByPropertyAsync(s =>
+                s.OrderId == orderId && s.ServiceId == serviceId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (!serviceCartExists)
+        {
+            return NotFound($"Could not find service cart with order ID: {orderId} and service ID: {serviceId}");
+        }
+
+        var serviceCart = _mapper.Map<ServiceCart>((orderId, serviceId));
+        if (serviceCart is null)
+            return StatusCode(StatusCodes.Status500InternalServerError);
+
+        try
+        {
+            await _serviceCartRepository.DeleteAsync(serviceCart);
         }
         catch (Exception)
         {

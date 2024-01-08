@@ -7,7 +7,7 @@ public class Order
 {
     public int Id { get; set; }
 
-    public int ClientId { get; set; }
+    public int? ClientId { get; set; }
 
     [JsonIgnore] public Client Client { get; set; } = null!;
 
@@ -19,7 +19,7 @@ public class Order
 
     [JsonIgnore] public Staff Staff { get; set; } = null!;
 
-    public int DiscountId { get; set; }
+    public int? DiscountId { get; set; }
 
     [JsonIgnore] public Discount Discount { get; set; } = null!;
 

@@ -1,4 +1,6 @@
-﻿namespace DAPA.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace DAPA.Models;
 
 public class Service
 {
@@ -12,13 +14,11 @@ public class Service
 
     public string? Description { get; set; }
 
-    public int DiscountId { get; set; }
+    public int? DiscountId { get; set; }
 
-    public Discount Discount { get; set; } = null!;
+    [JsonIgnore] public Discount Discount { get; set; } = null!;
 
     public string? Category { get; set; }
-
-    public int PerformerId { get; set; }
 
     public DateTime ServiceDateTime { get; set; }
 }

@@ -14,6 +14,8 @@ public interface IOrderContext
     DbSet<Product> Products { get; }
     DbSet<Reservation> Reservations { get; }
     DbSet<Order> Orders { get; }
+    public DbSet<ProductCart> ProductCarts { get; }
+    public DbSet<ServiceCart> ServiceCarts { get; }
     DbContext Instance { get; }
 }
 
@@ -28,11 +30,22 @@ public class OrderContext : DbContext, IOrderContext
     public DbSet<Product> Products { get; private set; } = null!;
     public DbSet<Reservation> Reservations { get; private set; } = null!;
     public DbSet<Order> Orders { get; private set; } = null!;
+    public DbSet<ProductCart> ProductCarts { get; private set; } = null!;
+    public DbSet<ServiceCart> ServiceCarts { get; private set; } = null!;
 
     public DbContext Instance => this;
 
     public OrderContext(DbContextOptions<OrderContext> options)
         : base(options)
     {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ProductCart>()
+            .HasKey(pc => new { pc.OrderId, pc.ProductId });
+
+        modelBuilder.Entity<ServiceCart>()
+            .HasKey(sc => new { sc.OrderId, sc.ServiceId });
     }
 }
