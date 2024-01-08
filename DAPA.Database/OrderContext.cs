@@ -13,6 +13,7 @@ public interface IOrderContext
     DbSet<Role> Roles { get; }
     DbSet<Product> Products { get; }
     DbSet<Reservation> Reservations { get; }
+    DbSet<Order> Orders { get; }
     DbContext Instance { get; }
 }
 
@@ -26,6 +27,8 @@ public class OrderContext : DbContext, IOrderContext
     public DbSet<Role> Roles { get; private set; } = null!;
     public DbSet<Product> Products { get; private set; } = null!;
     public DbSet<Reservation> Reservations { get; private set; } = null!;
+    public DbSet<Order> Orders { get; private set; } = null!;
+
     public DbContext Instance => this;
 
     public OrderContext(DbContextOptions<OrderContext> options)

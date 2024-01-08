@@ -2,6 +2,7 @@ using DAPA.Database;
 using DAPA.Database.Clients;
 using DAPA.Database.Discounts;
 using DAPA.Database.Loyalties;
+using DAPA.Database.Orders;
 using DAPA.Database.Products;
 using DAPA.Database.Reservations;
 using DAPA.Database.Roles;
@@ -22,8 +23,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(DiscountProfile), typeof(LoyaltyProfile), typeof(ServiceProfile),
-    typeof(ClientProfile), typeof(StaffProfile), typeof(RoleProfile), typeof(ProductProfile), typeof(ReservationProfile)
-);
+    typeof(ClientProfile), typeof(StaffProfile), typeof(RoleProfile), typeof(ProductProfile),
+    typeof(ReservationProfile), typeof(OrderProfile));
 
 builder.Services.AddScoped<IOrderContext>(
     provider => provider.GetRequiredService<OrderContext>()
@@ -41,6 +42,7 @@ builder.Services.AddScoped<IStaffRepository, StaffDatabaseRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleDatabaseRepository>();
 builder.Services.AddScoped<IProductRepository, ProductDatabaseRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservationDatabaseRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderDatabaseRepository>();
 
 var app = builder.Build();
 
@@ -71,7 +73,6 @@ app.UseExceptionHandler(c => c.Run(async context =>
     var response = new { message = exception?.Message };
     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
     await context.Response.WriteAsJsonAsync(response);
-    Console.WriteLine(exception?.Message);
 }));
 
 app.UseHttpsRedirection();
