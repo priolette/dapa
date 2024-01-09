@@ -2,7 +2,7 @@
 
 public class OrderCreateRequest
 {
-    public int ClientId { get; set; }
+    public int? ClientId { get; set; }
 
     public DateTime CreationDate { get; set; }
 
@@ -10,7 +10,7 @@ public class OrderCreateRequest
 
     public int StaffId { get; set; }
 
-    public int DiscountId { get; set; }
+    public int? DiscountId { get; set; }
 
     public string? Details { get; set; }
 }

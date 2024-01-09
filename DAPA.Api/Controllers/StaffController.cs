@@ -42,7 +42,8 @@ public class StaffController : ControllerBase
         bool roleExists;
         try
         {
-            roleExists = await _roleRepository.ExistsByPropertyAsync(s => s.Id == request.RoleId);
+            roleExists = request.RoleId is null ||
+                         await _roleRepository.ExistsByPropertyAsync(s => s.Id == request.RoleId);
         }
         catch (Exception)
         {
@@ -96,7 +97,8 @@ public class StaffController : ControllerBase
         bool roleExists;
         try
         {
-            roleExists = await _roleRepository.ExistsByPropertyAsync(s => s.Id == request.RoleId);
+            roleExists = request.RoleId is null ||
+                         await _roleRepository.ExistsByPropertyAsync(s => s.Id == request.RoleId);
         }
         catch (Exception)
         {

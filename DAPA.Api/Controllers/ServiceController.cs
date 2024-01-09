@@ -55,7 +55,8 @@ public class ServiceController : ControllerBase
         bool discountExists;
         try
         {
-            discountExists = await _discountRepository.ExistsByPropertyAsync(s => s.Id == request.DiscountId);
+            discountExists = request.DiscountId is null ||
+                             await _discountRepository.ExistsByPropertyAsync(s => s.Id == request.DiscountId);
         }
         catch (Exception)
         {
@@ -125,7 +126,8 @@ public class ServiceController : ControllerBase
         bool discountExists;
         try
         {
-            discountExists = await _discountRepository.ExistsByPropertyAsync(s => s.Id == request.DiscountId);
+            discountExists = request.DiscountId is null ||
+                             await _discountRepository.ExistsByPropertyAsync(s => s.Id == request.DiscountId);
         }
         catch (Exception)
         {

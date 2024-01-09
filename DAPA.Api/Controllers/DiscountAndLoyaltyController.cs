@@ -177,7 +177,8 @@ public class DiscountAndLoyaltyController : ControllerBase
         bool discountExists;
         try
         {
-            discountExists = await _discountRepository.ExistsByPropertyAsync(d => d.Id == request.Discount);
+            discountExists = request.Discount is null ||
+                             await _discountRepository.ExistsByPropertyAsync(d => d.Id == request.Discount);
         }
         catch (Exception)
         {
@@ -234,6 +235,20 @@ public class DiscountAndLoyaltyController : ControllerBase
     public async Task<ActionResult<Loyalty>> UpdateLoyalty(int id,
         [FromBody] LoyaltyUpdateRequest request)
     {
+        bool discountExists;
+        try
+        {
+            discountExists = request.Discount is null ||
+                             await _discountRepository.ExistsByPropertyAsync(d => d.Id == request.Discount);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (!discountExists)
+            return NotFound($"Could not find discount with ID: {request.Discount}");
+
         Loyalty? loyalty;
 
         try

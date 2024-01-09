@@ -52,9 +52,11 @@ public class OrderController : ControllerBase
 
         try
         {
-            clientExists = await _clientRepository.ExistsByPropertyAsync(s => s.Id == request.ClientId);
+            clientExists = request.ClientId is null ||
+                           await _clientRepository.ExistsByPropertyAsync(s => s.Id == request.ClientId);
             staffExists = await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
-            discountExists = await _discountRepository.ExistsByPropertyAsync(s => s.Id == request.DiscountId);
+            discountExists = request.DiscountId is null ||
+                             await _discountRepository.ExistsByPropertyAsync(s => s.Id == request.DiscountId);
         }
         catch (Exception)
         {
@@ -112,9 +114,11 @@ public class OrderController : ControllerBase
 
         try
         {
-            clientExists = await _clientRepository.ExistsByPropertyAsync(s => s.Id == request.ClientId);
+            clientExists = request.ClientId is null ||
+                           await _clientRepository.ExistsByPropertyAsync(s => s.Id == request.ClientId);
             staffExists = await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
-            discountExists = await _discountRepository.ExistsByPropertyAsync(s => s.Id == request.DiscountId);
+            discountExists = request.DiscountId is null ||
+                             await _discountRepository.ExistsByPropertyAsync(s => s.Id == request.DiscountId);
         }
         catch (Exception)
         {
