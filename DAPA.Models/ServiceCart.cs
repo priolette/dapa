@@ -12,7 +12,7 @@ public class ServiceCart
 
     [JsonIgnore] public Service Service { get; set; } = null!;
 
-    public int StaffId { get; set; }
+    public int? StaffId { get; set; }
 
     [JsonIgnore] public Staff Staff { get; set; } = null!;
 

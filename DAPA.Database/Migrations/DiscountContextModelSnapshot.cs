@@ -298,7 +298,7 @@ namespace DAPA.Database.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<int>("StaffId")
+                    b.Property<int?>("StaffId")
                         .HasColumnType("integer");
 
                     b.HasKey("OrderId", "ServiceId");
@@ -461,9 +461,7 @@ namespace DAPA.Database.Migrations
 
                     b.HasOne("DAPA.Models.Staff", "Staff")
                         .WithMany()
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StaffId");
 
                     b.Navigation("Order");
 

@@ -6,7 +6,7 @@ public class ServiceCartCreateRequest
 
     public int ServiceId { get; set; }
 
-    public int StaffId { get; set; }
+    public int? StaffId { get; set; }
 
     public int Quantity { get; set; }
 }

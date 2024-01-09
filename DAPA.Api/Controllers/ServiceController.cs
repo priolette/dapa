@@ -214,7 +214,8 @@ public class ServiceController : ControllerBase
         {
             serviceExists = await _serviceRepository.ExistsByPropertyAsync(s => s.Id == request.ServiceId);
             orderExists = await _orderRepository.ExistsByPropertyAsync(o => o.Id == request.OrderId);
-            staffExists = await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
+            staffExists = request.StaffId is null ||
+                          await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
         }
         catch (Exception)
         {
@@ -293,7 +294,8 @@ public class ServiceController : ControllerBase
         {
             serviceExists = await _serviceRepository.ExistsByPropertyAsync(s => s.Id == request.ServiceId);
             orderExists = await _orderRepository.ExistsByPropertyAsync(o => o.Id == request.OrderId);
-            staffExists = await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
+            staffExists = request.StaffId is null ||
+                          await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
         }
         catch (Exception)
         {
