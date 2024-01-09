@@ -3,6 +3,7 @@ using DAPA.Database;
 using DAPA.Database.Discounts;
 using DAPA.Database.Orders;
 using DAPA.Database.Services;
+using DAPA.Database.Staff;
 using DAPA.Models;
 using DAPA.Models.Public;
 using DAPA.Models.Public.Services;
@@ -18,15 +19,18 @@ public class ServiceController : ControllerBase
     private readonly IServiceCartRepository _serviceCartRepository;
     private readonly IDiscountRepository _discountRepository;
     private readonly IOrderRepository _orderRepository;
+    private readonly IStaffRepository _staffRepository;
     private readonly IMapper _mapper;
 
     public ServiceController(IServiceRepository serviceRepository, IServiceCartRepository serviceCartRepository,
-        IDiscountRepository discountRepository, IOrderRepository orderRepository, IMapper mapper)
+        IDiscountRepository discountRepository, IOrderRepository orderRepository, IStaffRepository staffRepository,
+        IMapper mapper)
     {
         _serviceRepository = serviceRepository;
         _serviceCartRepository = serviceCartRepository;
         _discountRepository = discountRepository;
         _orderRepository = orderRepository;
+        _staffRepository = staffRepository;
         _mapper = mapper;
     }
 
@@ -201,13 +205,14 @@ public class ServiceController : ControllerBase
     [HttpPost("/service_cart")]
     public async Task<ActionResult<ServiceCart>> CreateServiceCart(ServiceCartCreateRequest request)
     {
-        // TODO: Add check for staff
         bool serviceExists;
         bool orderExists;
+        bool staffExists;
         try
         {
             serviceExists = await _serviceRepository.ExistsByPropertyAsync(s => s.Id == request.ServiceId);
             orderExists = await _orderRepository.ExistsByPropertyAsync(o => o.Id == request.OrderId);
+            staffExists = await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
         }
         catch (Exception)
         {
@@ -215,14 +220,11 @@ public class ServiceController : ControllerBase
         }
 
         if (!serviceExists)
-        {
             return NotFound($"Could not find service with ID: {request.ServiceId}");
-        }
-
         if (!orderExists)
-        {
             return NotFound($"Could not find order with ID: {request.OrderId}");
-        }
+        if (!staffExists)
+            return NotFound($"Could not find staff with ID: {request.StaffId}");
 
         var serviceCart = _mapper.Map<ServiceCart>(request);
         if (serviceCart is null)
@@ -282,13 +284,14 @@ public class ServiceController : ControllerBase
             return NotFound($"Could not find service cart with order ID: {orderId} and service ID: {serviceId}");
         }
 
-        // TODO: Add check for staff
         bool serviceExists;
         bool orderExists;
+        bool staffExists;
         try
         {
             serviceExists = await _serviceRepository.ExistsByPropertyAsync(s => s.Id == request.ServiceId);
             orderExists = await _orderRepository.ExistsByPropertyAsync(o => o.Id == request.OrderId);
+            staffExists = await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
         }
         catch (Exception)
         {
@@ -296,14 +299,11 @@ public class ServiceController : ControllerBase
         }
 
         if (!serviceExists)
-        {
             return NotFound($"Could not find service with ID: {request.ServiceId}");
-        }
-
         if (!orderExists)
-        {
             return NotFound($"Could not find order with ID: {request.OrderId}");
-        }
+        if (!staffExists)
+            return NotFound($"Could not find staff with ID: {request.StaffId}");
 
         var newServiceCart = _mapper.Map(request, serviceCart);
         if (newServiceCart is null)
