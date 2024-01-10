@@ -10,5 +10,5 @@ public class StaffUpdateRequest
 
     public string? Position { get; set; }
 
-    public int RoleId { get; set; }
+    public int? RoleId { get; set; }
 }

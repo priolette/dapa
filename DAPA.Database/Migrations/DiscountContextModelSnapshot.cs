@@ -33,7 +33,7 @@ namespace DAPA.Database.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.Property<int>("LoyaltyId")
+                    b.Property<int?>("LoyaltyId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -88,7 +88,7 @@ namespace DAPA.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DiscountId")
+                    b.Property<int?>("DiscountId")
                         .HasColumnType("integer");
 
                     b.Property<string>("StartDate")
@@ -109,7 +109,7 @@ namespace DAPA.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClientId")
+                    b.Property<int?>("ClientId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreationDate")
@@ -118,7 +118,7 @@ namespace DAPA.Database.Migrations
                     b.Property<string>("Details")
                         .HasColumnType("text");
 
-                    b.Property<int>("DiscountId")
+                    b.Property<int?>("DiscountId")
                         .HasColumnType("integer");
 
                     b.Property<int>("StaffId")
@@ -152,7 +152,7 @@ namespace DAPA.Database.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("DiscountId")
+                    b.Property<int?>("DiscountId")
                         .HasColumnType("integer");
 
                     b.Property<float>("Price")
@@ -166,6 +166,24 @@ namespace DAPA.Database.Migrations
                     b.HasIndex("DiscountId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("DAPA.Models.ProductCart", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductCarts");
                 });
 
             modelBuilder.Entity("DAPA.Models.Reservation", b =>
@@ -247,13 +265,10 @@ namespace DAPA.Database.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("DiscountId")
+                    b.Property<int?>("DiscountId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Duration")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PerformerId")
                         .HasColumnType("integer");
 
                     b.Property<float>("Price")
@@ -270,6 +285,29 @@ namespace DAPA.Database.Migrations
                     b.HasIndex("DiscountId");
 
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("DAPA.Models.ServiceCart", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("StaffId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrderId", "ServiceId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.HasIndex("StaffId");
+
+                    b.ToTable("ServiceCarts");
                 });
 
             modelBuilder.Entity("DAPA.Models.Staff", b =>
@@ -289,7 +327,7 @@ namespace DAPA.Database.Migrations
                     b.Property<string>("Position")
                         .HasColumnType("text");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Surname")
@@ -306,9 +344,7 @@ namespace DAPA.Database.Migrations
                 {
                     b.HasOne("DAPA.Models.Loyalty", "Loyalty")
                         .WithMany()
-                        .HasForeignKey("LoyaltyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LoyaltyId");
 
                     b.Navigation("Loyalty");
                 });
@@ -317,9 +353,7 @@ namespace DAPA.Database.Migrations
                 {
                     b.HasOne("DAPA.Models.Discount", "Discount")
                         .WithMany()
-                        .HasForeignKey("DiscountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DiscountId");
 
                     b.Navigation("Discount");
                 });
@@ -328,15 +362,11 @@ namespace DAPA.Database.Migrations
                 {
                     b.HasOne("DAPA.Models.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClientId");
 
                     b.HasOne("DAPA.Models.Discount", "Discount")
                         .WithMany()
-                        .HasForeignKey("DiscountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DiscountId");
 
                     b.HasOne("DAPA.Models.Staff", "Staff")
                         .WithMany()
@@ -355,11 +385,28 @@ namespace DAPA.Database.Migrations
                 {
                     b.HasOne("DAPA.Models.Discount", "Discount")
                         .WithMany()
-                        .HasForeignKey("DiscountId")
+                        .HasForeignKey("DiscountId");
+
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("DAPA.Models.ProductCart", b =>
+                {
+                    b.HasOne("DAPA.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Discount");
+                    b.HasOne("DAPA.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("DAPA.Models.Reservation", b =>
@@ -393,20 +440,41 @@ namespace DAPA.Database.Migrations
                 {
                     b.HasOne("DAPA.Models.Discount", "Discount")
                         .WithMany()
-                        .HasForeignKey("DiscountId")
+                        .HasForeignKey("DiscountId");
+
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("DAPA.Models.ServiceCart", b =>
+                {
+                    b.HasOne("DAPA.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Discount");
+                    b.HasOne("DAPA.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAPA.Models.Staff", "Staff")
+                        .WithMany()
+                        .HasForeignKey("StaffId");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Service");
+
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("DAPA.Models.Staff", b =>
                 {
                     b.HasOne("DAPA.Models.Role", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
                 });

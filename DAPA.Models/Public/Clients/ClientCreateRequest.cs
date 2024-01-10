@@ -6,7 +6,7 @@ public class ClientCreateRequest
 
     public string? Surname { get; set; }
 
-    public int LoyaltyId { get; set; }
+    public int? LoyaltyId { get; set; }
 
     public int PhoneNumber { get; set; }
 

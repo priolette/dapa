@@ -12,7 +12,7 @@ public class Product
 
     public string? Description { get; set; }
 
-    public int DiscountId { get; set; }
+    public int? DiscountId { get; set; }
 
     [JsonIgnore] public Discount Discount { get; set; } = null!;
 

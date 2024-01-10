@@ -14,7 +14,7 @@ public class Staff
 
     public string? Position { get; set; }
 
-    public int RoleId { get; set; }
+    public int? RoleId { get; set; }
 
     [JsonIgnore] public Role Role { get; set; } = null!;
 }

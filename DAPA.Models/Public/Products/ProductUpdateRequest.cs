@@ -8,7 +8,7 @@ public class ProductUpdateRequest
 
     public string? Description { get; set; }
 
-    public int DiscountId { get; set; }
+    public int? DiscountId { get; set; }
 
     public string? Category { get; set; }
 }

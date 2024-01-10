@@ -43,6 +43,8 @@ builder.Services.AddScoped<IRoleRepository, RoleDatabaseRepository>();
 builder.Services.AddScoped<IProductRepository, ProductDatabaseRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservationDatabaseRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderDatabaseRepository>();
+builder.Services.AddScoped<IProductCartRepository, ProductCartDatabaseRepository>();
+builder.Services.AddScoped<IServiceCartRepository, ServiceCartDatabaseRepository>();
 
 var app = builder.Build();
 

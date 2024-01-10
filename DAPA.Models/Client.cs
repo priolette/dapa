@@ -10,7 +10,7 @@ public class Client
 
     public string? Surname { get; set; }
 
-    public int LoyaltyId { get; set; }
+    public int? LoyaltyId { get; set; }
 
     [JsonIgnore] public Loyalty Loyalty { get; set; } = null!;
 

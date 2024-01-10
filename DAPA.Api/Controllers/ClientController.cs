@@ -43,7 +43,8 @@ public class ClientController : ControllerBase
         bool loyaltyExists;
         try
         {
-            loyaltyExists = await _loyaltyRepository.ExistsByPropertyAsync(l => l.Id == request.LoyaltyId);
+            loyaltyExists = request.LoyaltyId is null ||
+                            await _loyaltyRepository.ExistsByPropertyAsync(l => l.Id == request.LoyaltyId);
         }
         catch (Exception)
         {
@@ -92,7 +93,8 @@ public class ClientController : ControllerBase
         bool loyaltyExists;
         try
         {
-            loyaltyExists = await _loyaltyRepository.ExistsByPropertyAsync(l => l.Id == request.LoyaltyId);
+            loyaltyExists = request.LoyaltyId is null ||
+                            await _loyaltyRepository.ExistsByPropertyAsync(l => l.Id == request.LoyaltyId);
         }
         catch (Exception)
         {
