@@ -17,7 +17,7 @@ public interface IOrderContext
     DbSet<ProductCart> ProductCarts { get; }
     DbSet<ServiceCart> ServiceCarts { get; }
     DbSet<Payment> Payments { get; }
-
+    DbSet<WorkingHour> WorkingHours { get; }
     DbContext Instance { get; }
 }
 
@@ -35,6 +35,7 @@ public class OrderContext : DbContext, IOrderContext
     public DbSet<ProductCart> ProductCarts { get; private set; } = null!;
     public DbSet<ServiceCart> ServiceCarts { get; private set; } = null!;
     public DbSet<Payment> Payments { get; private set; } = null!;
+    public DbSet<WorkingHour> WorkingHours { get; private set; } = null!;
 
     public DbContext Instance => this;
 
