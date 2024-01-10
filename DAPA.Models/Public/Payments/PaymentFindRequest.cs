@@ -9,4 +9,6 @@ public class PaymentFindRequest
     public DateTime? Date { get; set; }
 
     public Method? Method { get; set; }
+
+    public float Amount { get; set; }
 }

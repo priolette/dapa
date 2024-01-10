@@ -13,6 +13,8 @@ public class Payment
     public DateTime Date { get; set; }
 
     public Method Method { get; set; }
+
+    public float Amount { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
