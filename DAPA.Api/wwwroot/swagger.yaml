@@ -1889,6 +1889,7 @@ components:
           type: integer
         Date:
           type: string
+          format: date-time
         Method:
           $ref: "#/components/schemas/PaymentMethod"
 
