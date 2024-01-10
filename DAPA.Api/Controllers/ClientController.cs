@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DAPA.Database.Clients;
+using DAPA.Database.Discounts;
 using DAPA.Database.Loyalties;
 using DAPA.Models;
 using DAPA.Models.Public.Clients;
@@ -91,6 +92,7 @@ public class ClientController : ControllerBase
     public async Task<ActionResult<Client>> UpdateClient(int id, ClientUpdateRequest request)
     {
         bool loyaltyExists;
+
         try
         {
             loyaltyExists = request.LoyaltyId is null ||
@@ -104,6 +106,18 @@ public class ClientController : ControllerBase
         if (!loyaltyExists)
         {
             return NotFound($"Could not find loyalty with ID: {request.LoyaltyId}");
+        }
+
+        try
+        {
+            var clientExists = await _clientRepository.GetByPropertyAsync(c => c.Id == id);
+
+            if (clientExists == null)
+                return NotFound($"Could not find client with ID: {id}");
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
         Client? client;
