@@ -3,6 +3,7 @@ using DAPA.Database.Clients;
 using DAPA.Database.Discounts;
 using DAPA.Database.Loyalties;
 using DAPA.Database.Orders;
+using DAPA.Database.Payments;
 using DAPA.Database.Products;
 using DAPA.Database.Reservations;
 using DAPA.Database.Roles;
@@ -45,6 +46,7 @@ builder.Services.AddScoped<IReservationRepository, ReservationDatabaseRepository
 builder.Services.AddScoped<IOrderRepository, OrderDatabaseRepository>();
 builder.Services.AddScoped<IProductCartRepository, ProductCartDatabaseRepository>();
 builder.Services.AddScoped<IServiceCartRepository, ServiceCartDatabaseRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentDatabaseRepository>();
 
 var app = builder.Build();
 
