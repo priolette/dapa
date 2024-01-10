@@ -100,28 +100,6 @@ public class ReservationController : ControllerBase
         }
     }
 
-    // todo not working
-    [HttpGet("{id:int}/{StartTime:DateTime}/{EndTime:DateTime}")]
-    public async Task<ActionResult<List<(DateTime Start, DateTime End)>>> GetAvailableSlotsPerEmployee(int id, DateTime StartTime, DateTime EndTime)
-    {
-        List<(DateTime Start, DateTime End)> slots = new List<(DateTime, DateTime)>
-        {
-            (StartTime, EndTime),
-        };
-
-        bool clientExists;
-        try
-        {
-            clientExists = await _clientRepository.ExistsByPropertyAsync(c => c.Id == id);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-
-        return Ok(slots);
-    }
-
     [HttpPut("{id:int}")]
     public async Task<ActionResult<Reservation>> UpdateReservation(int id, ReservationUpdateRequest request)
     {

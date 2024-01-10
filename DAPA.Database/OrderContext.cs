@@ -17,7 +17,7 @@ public interface IOrderContext
     DbSet<ProductCart> ProductCarts { get; }
     DbSet<ServiceCart> ServiceCarts { get; }
     DbSet<Payment> Payments { get; }
-        DbSet<WorkingHour> WorkingHours { get; }
+    DbSet<WorkingHour> WorkingHours { get; }
     DbContext Instance { get; }
 }
 

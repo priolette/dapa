@@ -18,7 +18,7 @@ public class WorkingHoursController : ControllerBase
         _workingHoursRepository = workingHoursRepository;
         _mapper = mapper;
     }
-    [HttpGet("/workingHours")]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<WorkingHour>>> GetAllWorkingHours([FromQuery] WorkingHoursFindRequest request)
     {
         try
@@ -136,16 +136,3 @@ public class WorkingHoursController : ControllerBase
         return NoContent();
     }
 }
-
-/*
-    
-
-
-    
-
-    
-
-    
-    }
-}
- */

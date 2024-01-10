@@ -1,6 +1,6 @@
-﻿namespace DAPA.Models.Public.Reservations;
+﻿namespace DAPA.Models.Public.WorkingHours;
 
-public class ReservationGetAvailableSlotsPerService
+public class WorkingHoursAvailableSlotsEmployeeRequest
 {
     public int StaffId { get; set; }
 
