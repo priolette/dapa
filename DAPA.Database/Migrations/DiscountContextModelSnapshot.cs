@@ -370,6 +370,28 @@ namespace DAPA.Database.Migrations
                     b.ToTable("Staff");
                 });
 
+            modelBuilder.Entity("DAPA.Models.WorkingHour", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StaffId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkingHours");
+                });
+
             modelBuilder.Entity("DAPA.Models.Client", b =>
                 {
                     b.HasOne("DAPA.Models.Loyalty", "Loyalty")

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DAPA.Database.Migrations
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20240110180910_AddWorkingHours")]
+    [Migration("20240110185227_AddWorkingHours")]
     partial class AddWorkingHours
     {
         /// <inheritdoc />
@@ -145,6 +145,30 @@ namespace DAPA.Database.Migrations
                     b.HasIndex("StaffId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("DAPA.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("DAPA.Models.Product", b =>
@@ -410,6 +434,17 @@ namespace DAPA.Database.Migrations
                     b.Navigation("Discount");
 
                     b.Navigation("Staff");
+                });
+
+            modelBuilder.Entity("DAPA.Models.Payment", b =>
+                {
+                    b.HasOne("DAPA.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("DAPA.Models.Product", b =>
