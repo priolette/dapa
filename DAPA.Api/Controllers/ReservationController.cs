@@ -38,7 +38,7 @@ public class ReservationController : ControllerBase
             var reservations = await _reservationRepository.GetAllAsync(request);
             return Ok(reservations);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
