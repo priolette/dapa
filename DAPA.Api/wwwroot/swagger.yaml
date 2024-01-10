@@ -1785,6 +1785,8 @@ components:
           type: integer
         Details:
           type: string
+        Tip:
+          type: number
 
     Status:
       type: string
