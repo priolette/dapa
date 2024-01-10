@@ -1696,6 +1696,8 @@ paths:
       responses:
         '200':
           description: Successful operation
+  
+  /workinghour:
     post:
       tags:
         - Workinghours
@@ -1729,7 +1731,6 @@ paths:
           description: Successful operation
         '404':
           description: Working hour not found
-
     put:
       tags:
         - Workinghours
@@ -1771,6 +1772,43 @@ paths:
           description: Working hour deleted successfully
         '404':
           description: Working hour not found
+          
+  /workinghours/staff/{StaffId}:
+    get:
+      tags:
+        - Workinghours
+      summary: Get all working hours for staffId
+      parameters:
+        - name: StaffId
+          in: path
+          required: true
+          description: ID of the staff member
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Staff working hour not found
+    
+  /workinghours/available/{StaffId}:
+      get:
+        tags:
+          - Workinghours
+        summary: Get available working hours for staffId
+        parameters:
+          - name: StaffId
+            in: path
+            required: true
+            description: ID of the staff member
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: Successful operation
+          '404':
+            description: Available staf working hours not found
+
 
 components:
   schemas:
