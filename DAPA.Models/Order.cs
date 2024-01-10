@@ -24,6 +24,8 @@ public class Order
     [JsonIgnore] public Discount Discount { get; set; } = null!;
 
     public string? Details { get; set; }
+
+    public float Tip { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

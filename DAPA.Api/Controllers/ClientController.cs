@@ -106,18 +106,18 @@ public class ClientController : ControllerBase
             return NotFound($"Could not find loyalty with ID: {request.LoyaltyId}");
         }
 
+        Client? client;
+
         try
         {
-            var clientExists = await _clientRepository.ExistsByPropertyAsync(c => c.Id == id);
-            if (!clientExists)
-                return NotFound($"Could not find client with ID: {id}");
+            client = await _clientRepository.GetByPropertyAsync(s => s.Id == id);
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        var updatedClient = _mapper.Map<Client>(request);
+        var updatedClient = _mapper.Map(request, client);
         if (updatedClient == null)
             return StatusCode(StatusCodes.Status500InternalServerError);
 

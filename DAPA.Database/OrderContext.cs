@@ -47,5 +47,9 @@ public class OrderContext : DbContext, IOrderContext
 
         modelBuilder.Entity<ServiceCart>()
             .HasKey(sc => new { sc.OrderId, sc.ServiceId });
+
+        modelBuilder.Entity<Client>()
+            .HasIndex(u => new { u.Name, u.Surname })
+            .IsUnique();
     }
 }

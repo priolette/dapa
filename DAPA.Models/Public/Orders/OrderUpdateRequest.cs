@@ -13,4 +13,6 @@ public class OrderUpdateRequest
     public int? DiscountId { get; set; }
 
     public string? Details { get; set; }
+
+    public float Tip { get; set; }
 }
