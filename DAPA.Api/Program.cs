@@ -8,6 +8,7 @@ using DAPA.Database.Reservations;
 using DAPA.Database.Roles;
 using DAPA.Database.Services;
 using DAPA.Database.Staff;
+using DAPA.Database.WorkingHours;
 using DAPA.Models.Mappings;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.StaticFiles;
@@ -45,6 +46,7 @@ builder.Services.AddScoped<IReservationRepository, ReservationDatabaseRepository
 builder.Services.AddScoped<IOrderRepository, OrderDatabaseRepository>();
 builder.Services.AddScoped<IProductCartRepository, ProductCartDatabaseRepository>();
 builder.Services.AddScoped<IServiceCartRepository, ServiceCartDatabaseRepository>();
+builder.Services.AddScoped<IWorkingHoursRepository,  WorkingHoursDatabaseRepository>();
 
 var app = builder.Build();
 

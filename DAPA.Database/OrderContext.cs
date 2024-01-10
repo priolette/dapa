@@ -14,9 +14,11 @@ public interface IOrderContext
     DbSet<Product> Products { get; }
     DbSet<Reservation> Reservations { get; }
     DbSet<Order> Orders { get; }
+    DbSet<WorkingHour> WorkingHours { get; }
     public DbSet<ProductCart> ProductCarts { get; }
     public DbSet<ServiceCart> ServiceCarts { get; }
     DbContext Instance { get; }
+
 }
 
 public class OrderContext : DbContext, IOrderContext
@@ -32,6 +34,7 @@ public class OrderContext : DbContext, IOrderContext
     public DbSet<Order> Orders { get; private set; } = null!;
     public DbSet<ProductCart> ProductCarts { get; private set; } = null!;
     public DbSet<ServiceCart> ServiceCarts { get; private set; } = null!;
+    public DbSet<WorkingHour> WorkingHours { get; private set; } = null!;
 
     public DbContext Instance => this;
 

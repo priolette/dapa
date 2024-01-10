@@ -1687,6 +1687,90 @@ paths:
           description: Successful response
         '400':
           description: Bad request
+    
+  /workinghours:
+    get:
+      tags:
+        - Workinghours
+      summary: Get all working hours
+      responses:
+        '200':
+          description: Successful operation
+    post:
+      tags:
+        - Workinghours
+      summary: Create a new working hour
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkingHours'
+      responses:
+        '201':
+          description: Working hour created successfully
+        '400':
+          description: Invalid input
+
+  /workinghours/{id}:
+    get:
+      tags:
+        - Workinghours
+      summary: Get a specific working hour by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the working hour
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: Working hour not found
+
+    put:
+      tags:
+        - Workinghours
+      summary: Update a working hour by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the working hour
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkingHours'
+      responses:
+        '200':
+          description: Working hour updated successfully
+        '400':
+          description: Invalid input
+        '404':
+          description: Working hour not found
+
+    delete:
+      tags:
+        - Workinghours
+      summary: Delete a working hour by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the working hour
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Working hour deleted successfully
+        '404':
+          description: Working hour not found
 
 components:
   schemas:
@@ -1893,3 +1977,17 @@ components:
           type: boolean
         IsOwner:
           type: boolean
+          
+    WorkingHours:
+      type: object
+      properties:
+        Id:
+          type: integer
+        StaffId:
+          type: integer
+        StartTime:
+          type: string
+          format: date-time
+        EndTime:
+          type: string
+          format: date-time
