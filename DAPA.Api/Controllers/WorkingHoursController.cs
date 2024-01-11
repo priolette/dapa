@@ -31,8 +31,6 @@ public class WorkingHoursController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<WorkingHour>>> GetAllWorkingHours([FromQuery] WorkingHoursFindRequest request)
     {
-        WorkingHoursFindRequest request1 = new();
-        request1.Id = 1;
         try
         {
             var workingHours = await _workingHoursRepository.GetAllAsync(request);
@@ -169,9 +167,11 @@ public class WorkingHoursController : ControllerBase
     [HttpGet("available/{StaffId:int}")]
     public async Task<ActionResult<IEnumerable<WorkingHour>>> GetAvailableWorkingHoursByStaffId(int staffId)
     {
+        WorkingHoursFindRequest request1 = new();
+        request1.StaffId = 2;
         try
         {
-            var workingHours = await _workingHoursRepository.GetAllAsync();
+            var workingHours = await _workingHoursRepository.GetAllAsync(request1);
             return Ok(workingHours);
         }
         catch (Exception)
