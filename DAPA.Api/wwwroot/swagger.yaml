@@ -883,6 +883,30 @@ paths:
           description: Successful response
         '400':
           description: Bad request
+          
+  /order/total/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get total based on order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Filter orders by ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
 
   /payments:
     get:
@@ -1792,13 +1816,13 @@ paths:
         '404':
           description: Working hour not found
           
-  /workinghours/available/{StaffId}:
+  /workinghours/available/{staffId}:
       get:
         tags:
           - Workinghours
         summary: Get available working hours for staffId
         parameters:
-          - name: StaffId
+          - name: staffId
             in: path
             required: true
             description: ID of the staff member

@@ -14,7 +14,7 @@ public class Payment
 
     public Method Method { get; set; }
 
-    public float Amount { get; set; }
+    public float? Amount { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

@@ -166,10 +166,10 @@ public class WorkingHoursController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("available/{StaffId:int}")]
-    public async Task<ActionResult<List<WorkingHoursDto>>> GetAvailableWorkingHoursByStaffId(int staffId)
+    [HttpGet("available/{staffId:int}")]
+    public async Task<ActionResult<List<WorkingHoursResponse>>> GetAvailableWorkingHoursByStaffId(int staffId)
     {
-        List<WorkingHoursDto> available = new();
+        List<WorkingHoursResponse> available = new();
 
         try
         {
@@ -178,7 +178,7 @@ public class WorkingHoursController : ControllerBase
             var workingHours = await _workingHoursRepository.GetAllAsync(request);
             foreach (WorkingHour el in workingHours)
             {
-                available.Add(new WorkingHoursDto { Start = el.StartTime, End = el.EndTime });
+                available.Add(new WorkingHoursResponse { Start = el.StartTime, End = el.EndTime });
             }
         }
         catch (Exception)
@@ -194,28 +194,15 @@ public class WorkingHoursController : ControllerBase
             foreach (Models.Reservation el in reservations)
             {
                 DateTime end;
-                Console.WriteLine($"++++++++");
-                Console.WriteLine($"{el.ServiceId}");
-                Console.WriteLine($"{el.StaffId}");
-                Console.WriteLine($"{el.DateTime}");
 
-                try
-                {
-                    ServiceFindRequest request1 = new();
-                    request1.Id = el.ServiceId;
-                    var service = await _serviceRepository.GetAllAsync(request1);
-                    Models.Service el2 = service.First();
+                ServiceFindRequest request1 = new();
+                request1.Id = el.ServiceId;
+                var service = await _serviceRepository.GetAllAsync(request1);
 
-                    Console.WriteLine($"********");
-                    Console.WriteLine($"{el2.Duration}");
-                    Console.WriteLine($"{el2.Id}");
-                    end = el.DateTime.AddHours(el2.Duration);
-                    Console.WriteLine($"{end}");
-                }
-                catch (Exception)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
+                Models.Service el2 = service.First();
+
+                end = el.DateTime.AddHours(el2.Duration);
+
                 RemoveBusyHours(available, el.DateTime, end);
             }
             return Ok(available);
@@ -226,7 +213,7 @@ public class WorkingHoursController : ControllerBase
         }
     }
 
-    static void RemoveBusyHours(List<WorkingHoursDto> workingHoursList, DateTime busyStart, DateTime busyEnd)
+    static void RemoveBusyHours(List<WorkingHoursResponse> workingHoursList, DateTime busyStart, DateTime busyEnd)
     {
         for (int i = 0; i < workingHoursList.Count; i++)
         {
@@ -236,12 +223,12 @@ public class WorkingHoursController : ControllerBase
             {
                 if (busyStart > currentWorkingHours.Start)
                 {
-                    workingHoursList.Insert(i + 1, new WorkingHoursDto { Start = currentWorkingHours.Start, End = busyStart });
+                    workingHoursList.Insert(i + 1, new WorkingHoursResponse { Start = currentWorkingHours.Start, End = busyStart });
                 }
 
                 if (busyEnd < currentWorkingHours.End)
                 {
-                    workingHoursList.Insert(i + 2, new WorkingHoursDto { Start = busyEnd, End = currentWorkingHours.End });
+                    workingHoursList.Insert(i + 2, new WorkingHoursResponse { Start = busyEnd, End = currentWorkingHours.End });
                 }
 
                 workingHoursList.RemoveAt(i);
