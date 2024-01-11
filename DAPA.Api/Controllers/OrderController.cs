@@ -2,16 +2,22 @@
 using DAPA.Database.Clients;
 using DAPA.Database.Discounts;
 using DAPA.Database.Orders;
+using DAPA.Database.Payments;
+using DAPA.Database.Products;
 using DAPA.Database.Reservations;
 using DAPA.Database.Services;
 using DAPA.Database.Staff;
 using DAPA.Database.WorkingHours;
 using DAPA.Models;
+using DAPA.Models.Public.Discounts;
 using DAPA.Models.Public.Orders;
+using DAPA.Models.Public.Payments;
+using DAPA.Models.Public.Products;
 using DAPA.Models.Public.Reservations;
 using DAPA.Models.Public.Services;
 using DAPA.Models.Public.WorkingHours;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace DAPA.Api.Controllers;
 
@@ -23,15 +29,27 @@ public class OrderController : ControllerBase
     private readonly IClientRepository _clientRepository;
     private readonly IStaffRepository _staffRepository;
     private readonly IDiscountRepository _discountRepository;
+    private readonly IServiceCartRepository _serviceCartRepository;
+    private readonly IServiceRepository _serviceRepository;
+    private readonly IProductCartRepository _productCartRepository;
+    private readonly IProductRepository _productRepository;
+    private readonly IPaymentRepository _paymentRepository;
     private readonly IMapper _mapper;
 
     public OrderController(IOrderRepository orderRepository, IClientRepository clientRepository,
-        IStaffRepository staffRepository, IDiscountRepository discountRepository, IMapper mapper)
+        IStaffRepository staffRepository, IDiscountRepository discountRepository, IMapper mapper, IServiceCartRepository serviceCartRepository,
+        IServiceRepository serviceRepository, IProductCartRepository productCartRepository, IProductRepository productRepository,
+        IPaymentRepository paymentRepository)
     {
         _orderRepository = orderRepository;
         _clientRepository = clientRepository;
         _staffRepository = staffRepository;
         _discountRepository = discountRepository;
+        _serviceCartRepository = serviceCartRepository;
+        _serviceRepository = serviceRepository;
+        _productCartRepository = productCartRepository;
+        _productRepository = productRepository;
+        _paymentRepository = paymentRepository;
         _mapper = mapper;
     }
 
@@ -200,19 +218,43 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("total/{id}")]
-    public async Task<ActionResult<List<WorkingHoursResponse>>> GetTotalByOrderId(int orderId)
+    public async Task<ActionResult<OrderTotalPriceResponse>> GetTotalByOrderId(int id)
     {
-        return Ok();
-        /*List<WorkingHoursDto> available = new();
+        OrderTotalPriceResponse total = new();
+        total.TotalAmount = 0;
+        total.Paid = 0;
+        int orderdiscount = 0;
+        total.Discount = 0;
+
+        bool orderExists;
+        try
+        {
+            orderExists = await _orderRepository.ExistsByPropertyAsync(s => s.Id == id);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (!orderExists)
+            return NotFound($"Could not find order with ID: {id}");
 
         try
         {
-            WorkingHoursFindRequest request = new();
-            request.StaffId = staffId;
-            var workingHours = await _workingHoursRepository.GetAllAsync(request);
-            foreach (WorkingHour el in workingHours)
+            OrderFindRequest orderFindRequest = new();
+            orderFindRequest.Id = id;
+            var orders = await _orderRepository.GetAllAsync(orderFindRequest);
+            Models.Order currentOrder = orders.First();
+            total.TotalAmount += currentOrder.Tip;
+            total.Tip = currentOrder.Tip;
+
+            if(currentOrder.DiscountId != null)
             {
-                available.Add(new WorkingHoursDto { Start = el.StartTime, End = el.EndTime });
+                DiscountFindRequest discountFindRequest = new();
+                discountFindRequest.Id = currentOrder.DiscountId;
+                var discounts = await _discountRepository.GetAllAsync(discountFindRequest);
+                Models.Discount thisDiscount = discounts.First();
+                orderdiscount = thisDiscount.Size;
             }
         }
         catch (Exception)
@@ -222,41 +264,86 @@ public class OrderController : ControllerBase
 
         try
         {
-            ReservationFindRequest request = new();
-            request.StaffId = staffId;
-            var reservations = await _reservationRepository.GetAllAsync(request);
-            foreach (Models.Reservation el in reservations)
+            ServiceCartFindRequest serviceCartFindRequest = new();
+            serviceCartFindRequest.OrderId = id;
+            var serviceCart = await _serviceCartRepository.GetAllAsync(serviceCartFindRequest);
+            foreach (Models.ServiceCart el in serviceCart)
             {
-                DateTime end;
-                Console.WriteLine($"++++++++");
-                Console.WriteLine($"{el.ServiceId}");
-                Console.WriteLine($"{el.StaffId}");
-                Console.WriteLine($"{el.DateTime}");
+                ServiceFindRequest serviceFindRequest = new();
+                serviceFindRequest.Id = el.ServiceId;
+                var service = await _serviceRepository.GetAllAsync(serviceFindRequest);
+                Models.Service thisService = service.First();
 
-                try
-                {
-                    ServiceFindRequest request1 = new();
-                    request1.Id = el.ServiceId;
-                    var service = await _serviceRepository.GetAllAsync(request1);
-                    Models.Service el2 = service.First();
+                DiscountFindRequest discountFindRequest = new();
+                discountFindRequest.Id = thisService.DiscountId;
+                var discounts = await _discountRepository.GetAllAsync(discountFindRequest);
+                Models.Discount thisDiscount = discounts.First();
 
-                    Console.WriteLine($"********");
-                    Console.WriteLine($"{el2.Duration}");
-                    Console.WriteLine($"{el2.Id}");
-                    end = el.DateTime.AddHours(el2.Duration);
-                    Console.WriteLine($"{end}");
-                }
-                catch (Exception)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
-                RemoveBusyHours(available, el.DateTime, end);
+                float dis = el.Quantity * (thisService.Price * (thisDiscount.Size) / 100);
+                float sum = el.Quantity * thisService.Price;
+
+                total.Discount += dis;
+                total.TotalAmount += sum;
             }
-            return Ok(available);
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
-        }*/
+        }
+
+        try
+        {
+            ProductCartFindRequest productCartFindRequest = new();
+            productCartFindRequest.OrderId = id;
+            var productCart = await _productCartRepository.GetAllAsync(productCartFindRequest);
+            foreach (Models.ProductCart el in productCart)
+            {
+                ProductFindRequest productFindRequest = new();
+                productFindRequest.Id = el.ProductId;
+                var product = await _productRepository.GetAllAsync(productFindRequest);
+                Models.Product thisProduct = product.First();
+
+                DiscountFindRequest discountFindRequest = new();
+                discountFindRequest.Id = thisProduct.DiscountId;
+                var discounts = await _discountRepository.GetAllAsync(discountFindRequest);
+                Models.Discount thisDiscount = discounts.First();
+
+                float dis = el.Quantity * ( thisProduct.Price * (thisDiscount.Size) / 100 );
+                float sum = el.Quantity * thisProduct.Price;
+
+                total.Discount += dis;
+                total.TotalAmount += sum;
+            }
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        total.Discount += total.TotalAmount * (orderdiscount) / 100;
+        float realAmount = total.TotalAmount - total.Discount;
+        
+        total.Tax = realAmount / 100*21;
+
+        try
+        {
+            PaymentFindRequest paymentFindRequest = new();
+            paymentFindRequest.OrderId = id;
+            var payments = await _paymentRepository.GetAllAsync(paymentFindRequest);
+            foreach (Models.Payment el in payments)
+            {
+                if(el.Amount != null)
+                {
+                    total.Paid += el.Amount.Value;
+                }   
+            }
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        total.ToPay = realAmount - total.Paid;
+        return Ok(total);
     }
 }
