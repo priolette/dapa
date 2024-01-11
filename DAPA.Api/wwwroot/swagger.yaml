@@ -1693,9 +1693,28 @@ paths:
       tags:
         - Workinghours
       summary: Get all working hours
+      parameters:
+        - name: id
+          in: query
+          description: Filter working hours by ID
+          schema:
+            type: integer
+        - name: staffid
+          in: query
+          description: Filter working hours by staff
+          schema:
+            type: integer
       responses:
         '200':
-          description: Successful operation
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '400':
+          description: Bad request
   
   /workinghour:
     post:
