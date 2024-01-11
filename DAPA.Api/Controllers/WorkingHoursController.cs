@@ -6,9 +6,11 @@ using DAPA.Database.Staff;
 using DAPA.Database.WorkingHours;
 using DAPA.Models;
 using DAPA.Models.Public.Reservations;
+using DAPA.Models.Public.Services;
 using DAPA.Models.Public.WorkingHours;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace DAPA.Api.Controllers;
 [ApiController]
@@ -165,18 +167,86 @@ public class WorkingHoursController : ControllerBase
     }
 
     [HttpGet("available/{StaffId:int}")]
-    public async Task<ActionResult<IEnumerable<WorkingHour>>> GetAvailableWorkingHoursByStaffId(int staffId)
+    public async Task<ActionResult<List<WorkingHoursDto>>> GetAvailableWorkingHoursByStaffId(int staffId)
     {
-        WorkingHoursFindRequest request1 = new();
-        request1.StaffId = 2;
+        List<WorkingHoursDto> available = new();
+
         try
         {
-            var workingHours = await _workingHoursRepository.GetAllAsync(request1);
-            return Ok(workingHours);
+            WorkingHoursFindRequest request = new();
+            request.StaffId = staffId;
+            var workingHours = await _workingHoursRepository.GetAllAsync(request);
+            foreach (WorkingHour el in workingHours)
+            {
+                available.Add(new WorkingHoursDto { Start = el.StartTime, End = el.EndTime });
+            }
         }
         catch (Exception)
         {
             return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        try
+        {
+            ReservationFindRequest request = new();
+            request.StaffId = staffId;
+            var reservations = await _reservationRepository.GetAllAsync(request);
+            foreach (Models.Reservation el in reservations)
+            {
+                DateTime end;
+                Console.WriteLine($"++++++++");
+                Console.WriteLine($"{el.ServiceId}");
+                Console.WriteLine($"{el.StaffId}");
+                Console.WriteLine($"{el.DateTime}");
+
+                try
+                {
+                    ServiceFindRequest request1 = new();
+                    request1.Id = el.ServiceId;
+                    var service = await _serviceRepository.GetAllAsync(request1);
+                    Models.Service el2 = service.First();
+
+                    Console.WriteLine($"********");
+                    Console.WriteLine($"{el2.Duration}");
+                    Console.WriteLine($"{el2.Id}");
+                    end = el.DateTime.AddHours(el2.Duration);
+                    Console.WriteLine($"{end}");
+                }
+                catch (Exception)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+                RemoveBusyHours(available, el.DateTime, end);
+            }
+            return Ok(available);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    static void RemoveBusyHours(List<WorkingHoursDto> workingHoursList, DateTime busyStart, DateTime busyEnd)
+    {
+        for (int i = 0; i < workingHoursList.Count; i++)
+        {
+            var currentWorkingHours = workingHoursList[i];
+
+            if (busyStart < currentWorkingHours.End && busyEnd > currentWorkingHours.Start)
+            {
+                if (busyStart > currentWorkingHours.Start)
+                {
+                    workingHoursList.Insert(i + 1, new WorkingHoursDto { Start = currentWorkingHours.Start, End = busyStart });
+                }
+
+                if (busyEnd < currentWorkingHours.End)
+                {
+                    workingHoursList.Insert(i + 2, new WorkingHoursDto { Start = busyEnd, End = currentWorkingHours.End });
+                }
+
+                workingHoursList.RemoveAt(i);
+                i += 2;
+            }
         }
     }
 }
