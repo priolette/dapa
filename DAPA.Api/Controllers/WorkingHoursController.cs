@@ -1,9 +1,16 @@
 ﻿using AutoMapper;
+using DAPA.Database.Migrations;
+using DAPA.Database.Reservations;
+using DAPA.Database.Services;
 using DAPA.Database.Staff;
 using DAPA.Database.WorkingHours;
 using DAPA.Models;
+using DAPA.Models.Public.Reservations;
+using DAPA.Models.Public.Services;
 using DAPA.Models.Public.WorkingHours;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace DAPA.Api.Controllers;
 [ApiController]
@@ -11,10 +18,15 @@ namespace DAPA.Api.Controllers;
 public class WorkingHoursController : ControllerBase
 {
     private readonly IWorkingHoursRepository _workingHoursRepository;
+    private readonly IReservationRepository _reservationRepository;
+    private readonly IServiceRepository _serviceRepository;
     private readonly IMapper _mapper;
 
-    public WorkingHoursController(IWorkingHoursRepository workingHoursRepository, IMapper mapper)
+    public WorkingHoursController(IWorkingHoursRepository workingHoursRepository, 
+        IReservationRepository reservationRepository, IServiceRepository serviceRepository, IMapper mapper)
     {
+        _reservationRepository  = reservationRepository;
+        _serviceRepository      = serviceRepository;
         _workingHoursRepository = workingHoursRepository;
         _mapper = mapper;
     }
@@ -32,15 +44,33 @@ public class WorkingHoursController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("/workinghour")]
     public async Task<ActionResult<WorkingHour>> CreateWorkingHours(WorkingHoursCreateRequest request)
     {
+        if (request is null)
+        {
+            return BadRequest("Invalid request");
+        }
+
+        bool staffExists;
+        try
+        {
+            staffExists = await _workingHoursRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (!staffExists)
+            return NotFound($"Could not find staff with ID {request.StaffId}");
+
         try
         {
             var workingHour = _mapper.Map<WorkingHour>(request);
             if (workingHour is null)
                 return StatusCode(StatusCodes.Status500InternalServerError);
-
+                
             await _workingHoursRepository.InsertAsync(workingHour);
 
             return CreatedAtAction(nameof(GetWorkingHoursById), new { id = workingHour.Id }, workingHour);
@@ -134,5 +164,76 @@ public class WorkingHoursController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpGet("available/{staffId:int}")]
+    public async Task<ActionResult<List<WorkingHoursResponse>>> GetAvailableWorkingHoursByStaffId(int staffId)
+    {
+        List<WorkingHoursResponse> available = new();
+
+        try
+        {
+            WorkingHoursFindRequest request = new();
+            request.StaffId = staffId;
+            var workingHours = await _workingHoursRepository.GetAllAsync(request);
+            foreach (WorkingHour el in workingHours)
+            {
+                available.Add(new WorkingHoursResponse { Start = el.StartTime, End = el.EndTime });
+            }
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        try
+        {
+            ReservationFindRequest request = new();
+            request.StaffId = staffId;
+            var reservations = await _reservationRepository.GetAllAsync(request);
+            foreach (Models.Reservation el in reservations)
+            {
+                DateTime end;
+
+                ServiceFindRequest request1 = new();
+                request1.Id = el.ServiceId;
+                var service = await _serviceRepository.GetAllAsync(request1);
+
+                Models.Service el2 = service.First();
+
+                end = el.DateTime.AddHours(el2.Duration);
+
+                RemoveBusyHours(available, el.DateTime, end);
+            }
+            return Ok(available);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    static void RemoveBusyHours(List<WorkingHoursResponse> workingHoursList, DateTime busyStart, DateTime busyEnd)
+    {
+        for (int i = 0; i < workingHoursList.Count; i++)
+        {
+            var currentWorkingHours = workingHoursList[i];
+
+            if (busyStart < currentWorkingHours.End && busyEnd > currentWorkingHours.Start)
+            {
+                if (busyStart > currentWorkingHours.Start)
+                {
+                    workingHoursList.Insert(i + 1, new WorkingHoursResponse { Start = currentWorkingHours.Start, End = busyStart });
+                }
+
+                if (busyEnd < currentWorkingHours.End)
+                {
+                    workingHoursList.Insert(i + 2, new WorkingHoursResponse { Start = busyEnd, End = currentWorkingHours.End });
+                }
+
+                workingHoursList.RemoveAt(i);
+                i += 2;
+            }
+        }
     }
 }

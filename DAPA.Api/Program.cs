@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(DiscountProfile), typeof(LoyaltyProfile), typeof(ServiceProfile),
     typeof(ClientProfile), typeof(StaffProfile), typeof(RoleProfile), typeof(ProductProfile),
-    typeof(ReservationProfile), typeof(OrderProfile));
+    typeof(ReservationProfile), typeof(OrderProfile), typeof(WorkingHourProfile));
 
 builder.Services.AddScoped<IOrderContext>(
     provider => provider.GetRequiredService<OrderContext>()

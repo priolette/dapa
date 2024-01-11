@@ -25,22 +25,22 @@ public class WorkingHoursDatabaseRepository : IWorkingHoursRepository
 
         if (request.Id.HasValue)
         {
-            query = query.Where(x => x.Id == request.Id);
+            query = query.Where(x => x.Id == request.Id.Value);
         }
 
         if (request.StaffId.HasValue)
         {
-            query = query.Where(x => x.StaffId == request.StaffId);
+            query = query.Where(x => x.StaffId == request.StaffId.Value);
         }
 
         if (request.StartTime.HasValue)
         {
-            query = query.Where(x => x.StartTime == request.StartTime);
+            query = query.Where(x => x.StartTime == request.StartTime.Value);
         }
 
         if (request.EndTime.HasValue)
         {
-            query = query.Where(x => x.EndTime == request.EndTime);
+            query = query.Where(x => x.EndTime == request.EndTime.Value);
         }
 
         return await query.ToListAsync();
