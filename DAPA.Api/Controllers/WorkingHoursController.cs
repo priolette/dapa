@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DAPA.Database.Clients;
+using DAPA.Database.Migrations;
 using DAPA.Database.Reservations;
 using DAPA.Database.Services;
 using DAPA.Database.Staff;
@@ -31,6 +31,8 @@ public class WorkingHoursController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<WorkingHour>>> GetAllWorkingHours([FromQuery] WorkingHoursFindRequest request)
     {
+        WorkingHoursFindRequest request1 = new();
+        request1.Id = 1;
         try
         {
             var workingHours = await _workingHoursRepository.GetAllAsync(request);
@@ -162,5 +164,19 @@ public class WorkingHoursController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpGet("available/{StaffId:int}")]
+    public async Task<ActionResult<IEnumerable<WorkingHour>>> GetAvailableWorkingHoursByStaffId(int staffId)
+    {
+        try
+        {
+            var workingHours = await _workingHoursRepository.GetAllAsync();
+            return Ok(workingHours);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

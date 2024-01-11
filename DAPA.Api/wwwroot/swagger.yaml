@@ -1792,24 +1792,6 @@ paths:
         '404':
           description: Working hour not found
           
-  /workinghours/staff/{StaffId}:
-    get:
-      tags:
-        - Workinghours
-      summary: Get all working hours for staffId
-      parameters:
-        - name: StaffId
-          in: path
-          required: true
-          description: ID of the staff member
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Successful operation
-        '404':
-          description: Staff working hour not found
-    
   /workinghours/available/{StaffId}:
       get:
         tags:
