@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace DAPA.Api.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class WorkingHoursController : ControllerBase
@@ -20,18 +21,23 @@ public class WorkingHoursController : ControllerBase
     private readonly IWorkingHoursRepository _workingHoursRepository;
     private readonly IReservationRepository _reservationRepository;
     private readonly IServiceRepository _serviceRepository;
+    private readonly IStaffRepository _staffRepository;
     private readonly IMapper _mapper;
 
-    public WorkingHoursController(IWorkingHoursRepository workingHoursRepository, 
-        IReservationRepository reservationRepository, IServiceRepository serviceRepository, IMapper mapper)
+    public WorkingHoursController(IWorkingHoursRepository workingHoursRepository,
+        IReservationRepository reservationRepository, IServiceRepository serviceRepository,
+        IStaffRepository staffRepository, IMapper mapper)
     {
-        _reservationRepository  = reservationRepository;
-        _serviceRepository      = serviceRepository;
+        _reservationRepository = reservationRepository;
+        _serviceRepository = serviceRepository;
         _workingHoursRepository = workingHoursRepository;
+        _staffRepository = staffRepository;
         _mapper = mapper;
     }
+
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<WorkingHour>>> GetAllWorkingHours([FromQuery] WorkingHoursFindRequest request)
+    public async Task<ActionResult<IEnumerable<WorkingHour>>> GetAllWorkingHours(
+        [FromQuery] WorkingHoursFindRequest request)
     {
         try
         {
@@ -47,15 +53,10 @@ public class WorkingHoursController : ControllerBase
     [HttpPost("/workinghour")]
     public async Task<ActionResult<WorkingHour>> CreateWorkingHours(WorkingHoursCreateRequest request)
     {
-        if (request is null)
-        {
-            return BadRequest("Invalid request");
-        }
-
         bool staffExists;
         try
         {
-            staffExists = await _workingHoursRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
+            staffExists = await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
         }
         catch (Exception)
         {
@@ -63,14 +64,14 @@ public class WorkingHoursController : ControllerBase
         }
 
         if (!staffExists)
-            return NotFound($"Could not find staff with ID {request.StaffId}");
+            return NotFound($"Could not find staff with ID: {request.StaffId}");
 
         try
         {
             var workingHour = _mapper.Map<WorkingHour>(request);
             if (workingHour is null)
                 return StatusCode(StatusCodes.Status500InternalServerError);
-                
+
             await _workingHoursRepository.InsertAsync(workingHour);
 
             return CreatedAtAction(nameof(GetWorkingHoursById), new { id = workingHour.Id }, workingHour);
@@ -104,6 +105,19 @@ public class WorkingHoursController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<ActionResult<WorkingHour>> UpdateWorkingHours(int id, WorkingHoursUpdateRequest request)
     {
+        bool staffExists;
+        try
+        {
+            staffExists = await _staffRepository.ExistsByPropertyAsync(s => s.Id == request.StaffId);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        if (!staffExists)
+            return NotFound($"Could not find staff with ID: {request.StaffId}");
+
         WorkingHour? workingHour;
 
         try
@@ -173,13 +187,13 @@ public class WorkingHoursController : ControllerBase
 
         try
         {
-            WorkingHoursFindRequest request = new();
-            request.StaffId = staffId;
-            var workingHours = await _workingHoursRepository.GetAllAsync(request);
-            foreach (WorkingHour el in workingHours)
+            WorkingHoursFindRequest request = new()
             {
-                available.Add(new WorkingHoursResponse { Start = el.StartTime, End = el.EndTime });
-            }
+                StaffId = staffId
+            };
+            var workingHours = await _workingHoursRepository.GetAllAsync(request);
+            available.AddRange(workingHours.Select(el => new WorkingHoursResponse
+                { Start = el.StartTime, End = el.EndTime }));
         }
         catch (Exception)
         {
@@ -188,23 +202,26 @@ public class WorkingHoursController : ControllerBase
 
         try
         {
-            ReservationFindRequest request = new();
-            request.StaffId = staffId;
-            var reservations = await _reservationRepository.GetAllAsync(request);
-            foreach (Models.Reservation el in reservations)
+            ReservationFindRequest request = new()
             {
-                DateTime end;
-
-                ServiceFindRequest request1 = new();
-                request1.Id = el.ServiceId;
+                StaffId = staffId
+            };
+            var reservations = await _reservationRepository.GetAllAsync(request);
+            foreach (var el in reservations)
+            {
+                ServiceFindRequest request1 = new()
+                {
+                    Id = el.ServiceId
+                };
                 var service = await _serviceRepository.GetAllAsync(request1);
 
-                Models.Service el2 = service.First();
+                var el2 = service.First();
 
-                end = el.DateTime.AddHours(el2.Duration);
+                var end = el.DateTime.AddHours(el2.Duration);
 
                 RemoveBusyHours(available, el.DateTime, end);
             }
+
             return Ok(available);
         }
         catch (Exception)
@@ -215,25 +232,25 @@ public class WorkingHoursController : ControllerBase
 
     static void RemoveBusyHours(List<WorkingHoursResponse> workingHoursList, DateTime busyStart, DateTime busyEnd)
     {
-        for (int i = 0; i < workingHoursList.Count; i++)
+        for (var i = 0; i < workingHoursList.Count; i++)
         {
             var currentWorkingHours = workingHoursList[i];
 
-            if (busyStart < currentWorkingHours.End && busyEnd > currentWorkingHours.Start)
+            if (busyStart >= currentWorkingHours.End || busyEnd <= currentWorkingHours.Start) continue;
+            if (busyStart > currentWorkingHours.Start)
             {
-                if (busyStart > currentWorkingHours.Start)
-                {
-                    workingHoursList.Insert(i + 1, new WorkingHoursResponse { Start = currentWorkingHours.Start, End = busyStart });
-                }
-
-                if (busyEnd < currentWorkingHours.End)
-                {
-                    workingHoursList.Insert(i + 2, new WorkingHoursResponse { Start = busyEnd, End = currentWorkingHours.End });
-                }
-
-                workingHoursList.RemoveAt(i);
-                i += 2;
+                workingHoursList.Insert(i + 1,
+                    new WorkingHoursResponse { Start = currentWorkingHours.Start, End = busyStart });
             }
+
+            if (busyEnd < currentWorkingHours.End)
+            {
+                workingHoursList.Insert(i + 2,
+                    new WorkingHoursResponse { Start = busyEnd, End = currentWorkingHours.End });
+            }
+
+            workingHoursList.RemoveAt(i);
+            i += 2;
         }
     }
 }
