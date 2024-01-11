@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using DAPA.Database.Clients;
+using DAPA.Database.Reservations;
 using DAPA.Database.Services;
 using DAPA.Database.Staff;
 using DAPA.Database.WorkingHours;
 using DAPA.Models;
+using DAPA.Models.Public.Reservations;
 using DAPA.Models.Public.WorkingHours;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAPA.Api.Controllers;
 [ApiController]
@@ -13,10 +16,15 @@ namespace DAPA.Api.Controllers;
 public class WorkingHoursController : ControllerBase
 {
     private readonly IWorkingHoursRepository _workingHoursRepository;
+    private readonly IReservationRepository _reservationRepository;
+    private readonly IServiceRepository _serviceRepository;
     private readonly IMapper _mapper;
 
-    public WorkingHoursController(IWorkingHoursRepository workingHoursRepository, IMapper mapper)
+    public WorkingHoursController(IWorkingHoursRepository workingHoursRepository, 
+        IReservationRepository reservationRepository, IServiceRepository serviceRepository, IMapper mapper)
     {
+        _reservationRepository  = reservationRepository;
+        _serviceRepository      = serviceRepository;
         _workingHoursRepository = workingHoursRepository;
         _mapper = mapper;
     }
@@ -154,45 +162,5 @@ public class WorkingHoursController : ControllerBase
         }
 
         return NoContent();
-    }
-
-    [HttpGet("staff/{StaffId:int}")]
-    public async Task<ActionResult<WorkingHour>> GetWorkingHoursByStaffId(int staffId)
-    {
-        WorkingHour? workingHour;
-
-        try
-        {
-            workingHour = await _workingHoursRepository.GetByPropertyAsync(r => r.StaffId == staffId);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-
-        if (workingHour is null)
-            return NotFound($"Could not find working hours for with ID: {staffId}");
-
-        return Ok(workingHour);
-    }
-
-    [HttpGet("available/{StaffId:int}")]
-    public async Task<ActionResult<WorkingHour>> GetAvailableWorkingHoursByStaffId(int staffId)
-    {
-        WorkingHour? workingHour;
-
-        try
-        {
-            workingHour = await _workingHoursRepository.GetByPropertyAsync(r => r.StaffId == staffId);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-
-        if (workingHour is null)
-            return NotFound($"Could not find working hours for with ID: {staffId}");
-
-        return Ok(workingHour);
     }
 }

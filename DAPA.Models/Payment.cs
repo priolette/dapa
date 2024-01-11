@@ -8,7 +8,7 @@ public class Payment
 
     public int OrderId { get; set; }
 
-    [JsonIgnore] public Order Order { get; set; }
+    [JsonIgnore] public Order Order { get; set; } = null!;
 
     public DateTime Date { get; set; }
 
